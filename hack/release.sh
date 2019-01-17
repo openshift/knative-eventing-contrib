@@ -29,6 +29,7 @@ declare -A RELEASES
 RELEASES=(
   ["release.yaml"]="config/default.yaml"
   ["release-with-gcppubsub.yaml"]="config/default-gcppubsub.yaml"
+  ["message-dumper.yaml"]="config/tools/message-dumper.yaml"
 )
 readonly RELEASES
 
@@ -76,6 +77,6 @@ for yaml in ${all_yamls[@]}; do
   publish_yaml ${yaml} ${EVENTING_SOURCES_RELEASE_GCS} ${TAG}
 done
 
-branch_release "Knative Eventing Sources" "${all_yamls[@]}"
+branch_release "Knative Eventing Sources" "${all_yamls[*]}"
 
 echo "New release published successfully"

@@ -61,6 +61,8 @@ spec:
                     type: string
                   reason:
                     type: string
+                  severity:
+                    type: string
                   status:
                     type: string
                   type:
@@ -73,7 +75,6 @@ spec:
             sinkUri:
               type: string
           type: object
-      type: object
   version: v1alpha1
 status:
   acceptedNames:
@@ -184,6 +185,8 @@ spec:
                     type: string
                   reason:
                     type: string
+                  severity:
+                    type: string
                   status:
                     type: string
                   type:
@@ -198,7 +201,6 @@ spec:
             webhookIDKey:
               type: string
           type: object
-      type: object
   version: v1alpha1
 status:
   acceptedNames:
@@ -256,6 +258,8 @@ spec:
                     type: string
                   reason:
                     type: string
+                  severity:
+                    type: string
                   status:
                     type: string
                   type:
@@ -268,7 +272,6 @@ spec:
             sinkUri:
               type: string
           type: object
-      type: object
   version: v1alpha1
 status:
   acceptedNames:

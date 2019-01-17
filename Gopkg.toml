@@ -1,5 +1,6 @@
 required = [
-    "github.com/knative/test-infra",
+    "github.com/knative/test-infra/scripts",
+    "github.com/knative/test-infra/tools/dep-collector",
     "github.com/emicklei/go-restful",
     "github.com/onsi/ginkgo", # for test framework
     "github.com/onsi/gomega", # for test matchers
@@ -23,7 +24,6 @@ required = [
 
 [[prune.project]]
   name = "github.com/knative/test-infra"
-  unused-packages = false
   non-go = false
 
 [[prune.project]]
@@ -39,7 +39,7 @@ required = [
 [[override]]
   name = "github.com/knative/pkg"
   # HEAD as of 2018-11-05
-  revision = "a8160c7d728d26da67e596c5b1975877082a26e6"
+  revision = "862aa6dbe7b6a79430354f732da044d02dcadac0"
 
 [[override]]
   name = "k8s.io/api"
@@ -61,16 +61,6 @@ required = [
   name = "k8s.io/apiextensions-apiserver"
   version = "kubernetes-1.11.3"
 
-[[constraint]]
-  name = "sigs.k8s.io/controller-tools"
-  # TODO(n3wscott): this is forked because controller-tools assumed the docker
-  # file did not define the executable. This breaks how ko sets up what will be
-  # run in the container. I had to remove the string that defined the target.
-  # Kubebuilder is currently refactoring this into the kubebuilder area, unknown
-  # if it will be better.
-  source = "https://github.com/n3wscott/controller-tools.git"
-  version = "v0.1.1-assume_exe_status"
-
 [[override]]
   name = "cloud.google.com/go"
   revision = "90f2606161ee6a14efe2ca79fc05ac2b8efe250b"
@@ -83,8 +73,7 @@ required = [
 
 [[constraint]]
   name="sigs.k8s.io/controller-runtime"
-  revision = "5373e8e1f3188ff4266902a6fc86372bc14b3815"
-  # version="v0.1.1"
+  revision = "0f0740db56812f732d90ff7df3520a291a9f04c9"
 
 # For dependency below: Refer to issue https://github.com/golang/dep/issues/1799
 [[override]]
@@ -97,4 +86,3 @@ required = [
   # This is the commit at which k8s depends on this in 1.11
   # It seems to be broken at HEAD.
   revision = "f2b4162afba35581b6d4a50d3b8f34e33c144682"
-
