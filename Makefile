@@ -1,6 +1,12 @@
 # This file is needed by kubebuilder but all functionality should exist inside
 # the hack/ files.
 
+CGO_ENABLED=0
+GOOS=linux
+CORE_IMAGES=./cmd/gcppubsub_receive_adapter ./cmd/githubsource ./cmd/heartbeats \
+            ./cmd/heartbeats_receiver ./cmd/kuberneteseventsource ./cmd/manager \
+            ./cmd/message_dumper
+
 all: generate manifests test verify
 	
 # Run tests
@@ -33,3 +39,18 @@ verify-codegen:
 # Verify manifests
 verify-manifests:
 	./hack/verify-manifests.sh
+
+# Install core images
+install:
+	go install $(CORE_IMAGES)
+.PHONY: install
+
+# Run E2E tests on OpenShift
+test-e2e:
+	./openshift/e2e-tests-openshift.sh
+.PHONY: test-e2e
+
+# Generate Dockerfiles for images used by ci-operator. The files need to be committed manually.
+generate-dockerfiles:
+	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images $(CORE_IMAGES)
+.PHONY: generate-dockerfiles
