@@ -16,6 +16,8 @@ spec:
     kind: GitHubSource
     plural: githubsources
   scope: Namespaced
+  subresources:
+    status: {}
   validation:
     openAPIV3Schema:
       properties:
@@ -100,6 +102,8 @@ spec:
                     type: string
                   reason:
                     type: string
+                  severity:
+                    type: string
                   status:
                     type: string
                   type:
@@ -114,7 +118,6 @@ spec:
             webhookIDKey:
               type: string
           type: object
-      type: object
   version: v1alpha1
 status:
   acceptedNames:

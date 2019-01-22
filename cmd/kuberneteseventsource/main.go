@@ -18,11 +18,13 @@ package main
 
 import (
 	"flag"
-	"github.com/knative/pkg/signals"
 	"log"
+
+	"github.com/knative/pkg/signals"
 
 	"github.com/knative/eventing-sources/pkg/adapter/kubernetesevents"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 var (
@@ -38,7 +40,10 @@ func init() {
 func main() {
 	flag.Parse()
 
-	logger, err := zap.NewProduction()
+	logConfig := zap.NewProductionConfig()
+	logConfig.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	logger, err := logConfig.Build()
+
 	if err != nil {
 		log.Fatalf("unable to create logger: %v", err)
 	}

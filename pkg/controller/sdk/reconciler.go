@@ -25,18 +25,17 @@ import (
 	"k8s.io/apimachinery/pkg/api/equality"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/record"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
+	"sigs.k8s.io/controller-runtime/pkg/runtime/inject"
 )
 
 type Reconciler struct {
-	client        client.Client
-	dynamicClient dynamic.Interface
-	recorder      record.EventRecorder
-	scheme        *runtime.Scheme
+	client   client.Client
+	recorder record.EventRecorder
+	scheme   *runtime.Scheme
 
 	provider Provider
 }
@@ -91,18 +90,12 @@ func (r *Reconciler) Reconcile(request reconcile.Request) (reconcile.Result, err
 
 func (r *Reconciler) InjectClient(c client.Client) error {
 	r.client = c
-	if r.provider.Reconciler != nil {
-		r.provider.Reconciler.InjectClient(c)
-	}
-	return nil
+	_, err := inject.ClientInto(c, r.provider.Reconciler)
+	return err
 }
 
 func (r *Reconciler) InjectConfig(c *rest.Config) error {
-	var err error
-	r.dynamicClient, err = dynamic.NewForConfig(c)
-	if r.provider.Reconciler != nil {
-		r.provider.Reconciler.InjectConfig(c)
-	}
+	_, err := inject.ConfigInto(c, r.provider.Reconciler)
 	return err
 }
 
@@ -152,17 +145,6 @@ func (r *Reconciler) update(ctx context.Context, request reconcile.Request, obje
 		return nil, err
 	}
 
-	// Status
-	freshStatus, err := NewReflectedStatusAccessor(freshObj)
-	if err != nil {
-		return nil, err
-	}
-	orgStatus, err := NewReflectedStatusAccessor(object)
-	if err != nil {
-		return nil, err
-	}
-	freshStatus.SetStatus(orgStatus.GetStatus())
-
 	// Finalizers
 	freshFinalizers, err := NewReflectedFinalizersAccessor(freshObj)
 	if err != nil {
@@ -174,12 +156,30 @@ func (r *Reconciler) update(ctx context.Context, request reconcile.Request, obje
 	}
 	freshFinalizers.SetFinalizers(orgFinalizers.GetFinalizers())
 
-	// Until #38113 is merged, we must use Update instead of UpdateStatus to
-	// update the Status block of the Source resource. UpdateStatus will not
-	// allow changes to the Spec of the resource, which is ideal for ensuring
-	// nothing other than resource status has been updated.
 	if err := r.client.Update(ctx, freshObj); err != nil {
 		return nil, err
 	}
+
+	// Refetch
+	freshObj = r.provider.Parent.DeepCopyObject()
+	if err := r.client.Get(ctx, request.NamespacedName, freshObj); err != nil {
+		return nil, err
+	}
+
+	// Status
+	freshStatus, err := NewReflectedStatusAccessor(freshObj)
+	if err != nil {
+		return nil, err
+	}
+	orgStatus, err := NewReflectedStatusAccessor(object)
+	if err != nil {
+		return nil, err
+	}
+	freshStatus.SetStatus(orgStatus.GetStatus())
+
+	if err := r.client.Status().Update(ctx, freshObj); err != nil {
+		return nil, err
+	}
+
 	return freshObj, nil
 }

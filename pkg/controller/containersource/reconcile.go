@@ -22,7 +22,6 @@ import (
 	"strings"
 
 	"go.uber.org/zap"
-	"k8s.io/client-go/rest"
 
 	"github.com/knative/eventing-sources/pkg/apis/sources/v1alpha1"
 	"github.com/knative/eventing-sources/pkg/controller/containersource/resources"
@@ -37,17 +36,15 @@ import (
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/tools/record"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
 type reconciler struct {
-	client        client.Client
-	scheme        *runtime.Scheme
-	dynamicClient dynamic.Interface
-	recorder      record.EventRecorder
+	client   client.Client
+	scheme   *runtime.Scheme
+	recorder record.EventRecorder
 }
 
 // Reconcile compares the actual state with the desired, and attempts to
@@ -84,7 +81,7 @@ func (r *reconciler) Reconcile(ctx context.Context, object runtime.Object) (runt
 		ServiceAccountName: source.Spec.ServiceAccountName,
 	}
 
-	err = r.setSinkURIArg(source, args)
+	err = r.setSinkURIArg(ctx, source, args)
 	if err != nil {
 		return source, err
 	}
@@ -109,7 +106,10 @@ func (r *reconciler) Reconcile(ctx context.Context, object runtime.Object) (runt
 
 	// Update Deployment spec if it's changed
 	expected := resources.MakeDeployment(nil, args)
-	if !equality.Semantic.DeepEqual(deploy.Spec, expected.Spec) {
+	// Since the Deployment spec has fields defaulted by the webhook, it won't
+	// be equal to expected. Use DeepDerivative to compare only the fields that
+	// are set in expected.
+	if !equality.Semantic.DeepDerivative(expected.Spec, deploy.Spec) {
 		deploy.Spec = expected.Spec
 		err := r.client.Update(ctx, deploy)
 		// if no error, update the status.
@@ -131,7 +131,7 @@ func (r *reconciler) Reconcile(ctx context.Context, object runtime.Object) (runt
 	return source, nil
 }
 
-func (r *reconciler) setSinkURIArg(source *v1alpha1.ContainerSource, args *resources.ContainerArguments) error {
+func (r *reconciler) setSinkURIArg(ctx context.Context, source *v1alpha1.ContainerSource, args *resources.ContainerArguments) error {
 	if uri, ok := sinkArg(source); ok {
 		args.SinkInArgs = true
 		source.Status.MarkSink(uri)
@@ -143,7 +143,7 @@ func (r *reconciler) setSinkURIArg(source *v1alpha1.ContainerSource, args *resou
 		return fmt.Errorf("Sink missing from spec")
 	}
 
-	uri, err := sinks.GetSinkURI(r.dynamicClient, source.Spec.Sink, source.Namespace)
+	uri, err := sinks.GetSinkURI(ctx, r.client, source.Spec.Sink, source.Namespace)
 	if err != nil {
 		source.Status.MarkNoSink("NotFound", "")
 		return err
@@ -210,10 +210,4 @@ func (r *reconciler) createDeployment(ctx context.Context, source *v1alpha1.Cont
 func (r *reconciler) InjectClient(c client.Client) error {
 	r.client = c
 	return nil
-}
-
-func (r *reconciler) InjectConfig(c *rest.Config) error {
-	var err error
-	r.dynamicClient, err = dynamic.NewForConfig(c)
-	return err
 }
