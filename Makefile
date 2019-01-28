@@ -3,9 +3,7 @@
 
 CGO_ENABLED=0
 GOOS=linux
-CORE_IMAGES=./cmd/gcppubsub_receive_adapter ./cmd/githubsource ./cmd/heartbeats \
-            ./cmd/heartbeats_receiver ./cmd/kuberneteseventsource ./cmd/manager \
-            ./cmd/message_dumper
+CORE_IMAGES=$(shell find ./cmd -mindepth 1 -maxdepth 1 -type d)
 
 all: generate manifests test verify
 	
