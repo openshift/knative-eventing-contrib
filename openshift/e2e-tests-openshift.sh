@@ -4,7 +4,7 @@ source $(dirname $0)/../vendor/github.com/knative/test-infra/scripts/e2e-tests.s
 
 set -x
 
-function run_e2e_tests(){
+run_e2e_tests () {
   header "Running tests"
   echo "The E2E test suite is currently empty"
 }
