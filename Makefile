@@ -41,7 +41,10 @@ verify-manifests:
 # Install core images
 install:
 	go install $(CORE_IMAGES)
-.PHONY: install
+	go build -o $(GOPATH)/bin/kafka-source-controller ./contrib/kafka/cmd/controller
+	go build -o $(GOPATH)/bin/kafka-source-adapter ./contrib/kafka/cmd/receive_adapter
+	go build -o $(GOPATH)/bin/camel-source-controller ./contrib/camel/cmd/controller
+source.adapter: install
 
 # Run E2E tests on OpenShift
 test-e2e:
@@ -51,4 +54,7 @@ test-e2e:
 # Generate Dockerfiles for images used by ci-operator. The files need to be committed manually.
 generate-dockerfiles:
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images $(CORE_IMAGES)
+	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-source-controller
+	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-channel-controller
+	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images camel-source-controller
 .PHONY: generate-dockerfiles
