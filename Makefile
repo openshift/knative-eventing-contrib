@@ -54,7 +54,7 @@ test-e2e:
 # Generate Dockerfiles for images used by ci-operator. The files need to be committed manually.
 generate-dockerfiles:
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images $(CORE_IMAGES)
+	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-source-adapter
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-source-controller
-	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-channel-controller
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images camel-source-controller
 .PHONY: generate-dockerfiles
