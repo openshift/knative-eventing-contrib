@@ -47,7 +47,7 @@ for img in $core_images; do
       paths:
       - destination_dir: .
         source_path: /go/bin/$image_base
-  to: knative-serving-$image_base
+  to: knative-eventing-sources-$image_base
 EOF
 done
 
@@ -62,6 +62,6 @@ for img in $test_images; do
       paths:
       - destination_dir: .
         source_path: /go/bin/$image_base
-  to: knative-serving-test-$image_base
+  to: knative-eventing-sources-test-$image_base
 EOF
 done
