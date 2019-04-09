@@ -4,6 +4,7 @@
 CGO_ENABLED=0
 GOOS=linux
 CORE_IMAGES=$(shell find ./cmd -mindepth 1 -maxdepth 1 -type d)
+TEST_IMAGES=$(shell find ./test/test_images -mindepth 1 -maxdepth 1 -type d)
 
 all: generate manifests test verify
 	
@@ -46,6 +47,12 @@ install:
 	go build -o $(GOPATH)/bin/camel-source-controller ./contrib/camel/cmd/controller
 source.adapter: install
 
+test-install:
+	for img in $(TEST_IMAGES); do \
+		go install $$img ; \
+	done
+.PHONY: test-install
+
 # Run E2E tests on OpenShift
 test-e2e:
 	./openshift/e2e-tests-openshift.sh
@@ -57,4 +64,10 @@ generate-dockerfiles:
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-source-adapter
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-source-controller
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images camel-source-controller
+	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-test-images $(TEST_IMAGES)
 .PHONY: generate-dockerfiles
+
+# Generates a ci-operator configuration for a specific branch.
+generate-ci-config:
+	./openshift/ci-operator/generate-ci-config.sh $(BRANCH) > ci-operator-config.yaml
+.PHONY: generate-ci-config
