@@ -15,13 +15,9 @@ function resolve_resources(){
   for yaml in "$dir"/*.yaml; do
     echo "---" >> $resolved_file_name
     # 1. Prefix test image references with test-
-    # 2. Rewrite camel source image reference separately
-    # 3. Rewrite kafka source/contriller image references separately
-    # 4. Rewrite github source image reference separately
-    # 5. Rewrite cronjob source image reference separately
-    # 6. Rewrite image references
-    # 6. Remove comment lines
-    # 8. Remove empty lines
+    # 2. Rewrite image references
+    # 3. Remove comment lines
+    # 4. Remove empty lines
     sed -e "s+\(.* image: \)\(github.com\)\(.*/\)\(test/\)\(.*\)+\1\2 \3\4test-\5+g" \
         -e "s+github.com/knative/eventing-sources/contrib/camel/cmd/controller+${image_prefix}camel-source-controller${image_tag}+" \
         -e "s+github.com/knative/eventing-sources/contrib/kafka/cmd/receive_adapter+${image_prefix}kafka-source-adapter${image_tag}+" \
