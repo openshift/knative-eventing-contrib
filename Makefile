@@ -71,3 +71,8 @@ generate-dockerfiles:
 generate-ci-config:
 	./openshift/ci-operator/generate-ci-config.sh $(BRANCH) > ci-operator-config.yaml
 .PHONY: generate-ci-config
+
+# Generate an aggregated knative yaml file with replaced image references
+generate-release:
+	./openshift/release/generate-release.sh $(RELEASE)
+.PHONY: generate-release
