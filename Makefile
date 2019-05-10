@@ -76,3 +76,7 @@ generate-ci-config:
 generate-release:
 	./openshift/release/generate-release.sh $(RELEASE)
 .PHONY: generate-release
+
+generate-kafka:
+	./openshift/release/generate-kafka.sh $(RELEASE)
+.PHONY: generate-release
