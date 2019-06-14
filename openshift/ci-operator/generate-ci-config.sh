@@ -4,7 +4,7 @@ branch=${1-'knative-v0.5.0'}
 
 cat <<EOF
 tag_specification:
-  name: '4.0'
+  name: '4.1'
   namespace: ocp
 promotion:
   cluster: https://api.ci.openshift.org
@@ -12,13 +12,13 @@ promotion:
   name: $branch
 base_images:
   base:
-    name: '4.0'
+    name: '4.1'
     namespace: ocp
     tag: base
 build_root:
   project_image:
     dockerfile_path: openshift/ci-operator/build-image/Dockerfile
-canonical_go_repository: github.com/knative/eventing-sources
+canonical_go_repository: github.com/knative/eventing-contrib
 binary_build_commands: make install
 test_binary_build_commands: make test-install
 tests:
