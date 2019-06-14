@@ -1,4 +1,4 @@
-# Openshift Knative Eventing
+# Openshift Knative Eventing Contrib
 
 This repository holds Openshift's fork of
 [`knative/eventing-contrib`](https://github.com/knative/eventing-contrib) with additions and
