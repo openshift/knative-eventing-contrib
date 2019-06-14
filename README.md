@@ -1,15 +1,15 @@
 # Openshift Knative Eventing
 
 This repository holds Openshift's fork of
-[`knative/eventing`](https://github.com/knative/eventing) with additions and
+[`knative/eventing-contrib`](https://github.com/knative/eventing-contrib) with additions and
 fixes needed only for the OpenShift side of things.
 
 ## List of releases
 
-- (old) [openshift-v0.2.0](https://github.com/openshift/knative-eventing-sources/tree/openshift-v0.2.0)
-- (old) [openshift-v0.3.0](https://github.com/openshift/knative-eventing-sources/tree/openshift-v0.3.0)
-- [release-v0.4.1](https://github.com/openshift/knative-eventing-sources/tree/release-v0.4.1)
-- [release-v0.5.0](https://github.com/openshift/knative-eventing-sources/tree/release-v0.5.0)
+- (old) [openshift-v0.2.0](https://github.com/openshift/knative-eventing-contrib/tree/openshift-v0.2.0)
+- (old) [openshift-v0.3.0](https://github.com/openshift/knative-eventing-contrib/tree/openshift-v0.3.0)
+- [release-v0.4.1](https://github.com/openshift/knative-eventing-contrib/tree/release-v0.4.1)
+- [release-v0.5.0](https://github.com/openshift/knative-eventing-contrib/tree/release-v0.5.0)
 
 ## How this repository works ?
 
@@ -40,7 +40,7 @@ following documentation.
 
 The job manifests for the CI jobs are generated automatically. The
 basic configuration lives in the
-[/ci-operator/config/openshift/knative-eventing](https://github.com/openshift/release/tree/master/ci-operator/config/openshift/knative-eventing) folder of the
+[/ci-operator/config/openshift/knative-eventing-contrib](https://github.com/openshift/release/tree/master/ci-operator/config/openshift/knative-eventing-contrib) folder of the
 [openshift/release](https://github.com/openshift/release) repository. These files include which version to
 build against (OCP 4.0 for our recent cases), which images to build
 (this includes all the images needed to run Knative and also all the
@@ -50,7 +50,7 @@ for the CI jobs to run (more on this later).
 Before we can create the ci-operator configs mentioned above, we need
 to make sure there are Dockerfiles for all images that we need
 (they’ll be referenced by the ci-operator config hence we need to
-create them first). The [generate-dockerfiles.sh](https://github.com/openshift/knative-eventing-sources/blob/master/openshift/ci-operator/generate-dockerfiles.sh) script takes care of
+create them first). The [generate-dockerfiles.sh](https://github.com/openshift/knative-eventing-contrib/blob/master/openshift/ci-operator/generate-dockerfiles.sh) script takes care of
 creating all the Dockerfiles needed automatically. The files now need
 to be committed to the branch that CI is being setup for.
 
@@ -62,7 +62,7 @@ prone.
 
 Once the file is generated, it must be committed to the
 [openshift/release](https://github.com/openshift/release) repository, as the other manifests linked above. The
-naming schema is `openshift-knative-eventing-BRANCH.yaml`, thus the
+naming schema is `openshift-knative-eventing-contrib-BRANCH.yaml`, thus the
 files existing already correspond to our existing releases and the
 master branch itself.
 
@@ -72,7 +72,7 @@ corresponding [ci-operator documentation](https://docs.google.com/document/d/1SQ
 
 Once all of this is done (Dockerfiles committed, ci-operator config
 created and job manifests generated) a PR must be opened against
-[openshift/release](https://github.com/openshift/releaseopenshift/release)
+[openshift/release](https://github.com/openshift/release)
 to include all the ci-operator related files. Once
 this PR is merged, the CI setup for that branch is active.
 
@@ -112,7 +112,7 @@ this PR is merged, the CI setup for that branch is active.
 
 #### Update OLM metadata
 
-1. The following instructions amount to mirroring upstream changes in the OLM manifests beneath [openshift/olm](https://github.com/openshift/knative-eventing-sources/tree/master/openshift/olm) in our forks.
+1. The following instructions amount to mirroring upstream changes in the OLM manifests beneath [openshift/olm](https://github.com/openshift/knative-eventing-contrib/tree/master/openshift/olm) in our forks.
 2. Create a new `*.clusterserviceversion.yaml` for the upstream release. It’s easiest to copy the previous release’s CSV to a new file and update the name, version, and replaces fields, as well as the version of the operator’s image.
 3. Ensure the upstream release’s RBAC policies match what’s in the CSV. Any upstream edits should be carried over.
 4. Mirror any upstream manifest changes to CRD’s in the corresponding `*.crd.yaml` file.
