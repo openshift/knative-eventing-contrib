@@ -42,8 +42,8 @@ verify-manifests:
 # Install core images
 install:
 	go install $(CORE_IMAGES)
-	go build -o $(GOPATH)/bin/kafka-source-controller ./contrib/kafka/cmd/controller
-	go build -o $(GOPATH)/bin/kafka-source-adapter ./contrib/kafka/cmd/receive_adapter
+	go build -o $(GOPATH)/bin/kafka-source-controller ./kafka/source/cmd/controller
+	go build -o $(GOPATH)/bin/kafka-source-adapter ./kafka/source/cmd/receive_adapter
 	go build -o $(GOPATH)/bin/camel-source-controller ./contrib/camel/cmd/controller
 source.adapter: install
 
