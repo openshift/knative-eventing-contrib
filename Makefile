@@ -7,7 +7,7 @@ CORE_IMAGES=$(shell find ./cmd -mindepth 1 -maxdepth 1 -type d)
 TEST_IMAGES=$(shell find ./test/test_images -mindepth 1 -maxdepth 1 -type d)
 
 all: generate manifests test verify
-	
+
 # Run tests
 test: generate manifests verify
 	go test ./pkg/... ./cmd/... -coverprofile cover.out
@@ -46,7 +46,7 @@ install:
 	go build -o $(GOPATH)/bin/kafka-source-adapter ./kafka/source/cmd/receive_adapter
 	go build -o $(GOPATH)/bin/camel-source-controller ./contrib/camel/cmd/controller
 	go build -o $(GOPATH)/bin/github-source-controller ./contrib/github/cmd/controller
-	go build -o $(GOPATH)/bin/github-source-adapter ./contrib/github/cmd/receive_adapter
+	go build -o $(GOPATH)/bin/github-receive-adapter ./contrib/github/cmd/receive_adapter
 source.adapter: install
 
 test-install:
@@ -66,7 +66,7 @@ generate-dockerfiles:
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-source-adapter
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-source-controller
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images camel-source-controller
-	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images github-source-adapter
+	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images github-receive-adapter
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images github-source-controller
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-test-images $(TEST_IMAGES)
 .PHONY: generate-dockerfiles
