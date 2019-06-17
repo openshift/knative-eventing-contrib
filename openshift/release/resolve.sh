@@ -22,7 +22,11 @@ function resolve_resources(){
         -e "s+github.com/knative/eventing-sources/contrib/camel/cmd/controller+${image_prefix}camel-source-controller${image_tag}+" \
         -e "s+github.com/knative/eventing-sources/kafka/source/cmd/receive_adapter+${image_prefix}kafka-source-adapter${image_tag}+" \
         -e "s+github.com/knative/eventing-sources/kafka/source/cmd/controller+${image_prefix}kafka-source-controller${image_tag}+" \
-        -e "s+github.com/knative/eventing-sources/cmd/github_receive_adapter+${image_prefix}github-receive-adapter${image_tag}+" \
+        -e "s+github.com/knative/eventing-sources/contrib/github/cmd/github_receive_adapter+${image_prefix}github-receive-adapter${image_tag}+" \
+        -e "s+github.com/knative/eventing-contrib/contrib/camel/cmd/controller+${image_prefix}camel-source-controller${image_tag}+" \
+        -e "s+github.com/knative/eventing-contrib/kafka/source/cmd/receive_adapter+${image_prefix}kafka-source-adapter${image_tag}+" \
+        -e "s+github.com/knative/eventing-contrib/kafka/source/cmd/controller+${image_prefix}kafka-source-controller${image_tag}+" \
+        -e "s+github.com/knative/eventing-contrib/contrib/github/cmd/github_receive_adapter+${image_prefix}github-receive-adapter${image_tag}+" \
         -e "s+\(.* image: \)\(github.com\)\(.*/\)\(.*\)+\1${image_prefix}\4${image_tag}+g" \
         -e "s+\(.* value: \)\(github.com\)\(.*/\)\(.*\)+\1${image_prefix}\4${image_tag}+g" \
         -e '/^[ \t]*#/d' \
