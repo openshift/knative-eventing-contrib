@@ -2,7 +2,9 @@
 
 approvers:
 - eventing-sources-approvers
+- eventing-contrib-approvers
 
 reviewers:
 - eventing-sources-reviewers
+- eventing-contrib-reviewers
 
