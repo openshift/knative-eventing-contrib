@@ -44,7 +44,7 @@ install:
 	go install $(CORE_IMAGES)
 	go build -o $(GOPATH)/bin/kafka-source-controller ./kafka/source/cmd/controller
 	go build -o $(GOPATH)/bin/kafka-source-adapter ./kafka/source/cmd/receive_adapter
-	go build -o $(GOPATH)/bin/camel-source-controller ./contrib/camel/cmd/controller
+	go build -o $(GOPATH)/bin/camel-source-controller ./camel/source/cmd/controller
 	go build -o $(GOPATH)/bin/github-source-controller ./contrib/github/cmd/controller
 	go build -o $(GOPATH)/bin/github-receive-adapter ./contrib/github/cmd/receive_adapter
 source.adapter: install
