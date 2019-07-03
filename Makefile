@@ -84,3 +84,7 @@ generate-release:
 generate-kafka:
 	./openshift/release/generate-kafka.sh $(RELEASE)
 .PHONY: generate-release
+
+generate-camel:
+	./openshift/release/generate-camel.sh $(RELEASE)
+.PHONY: generate-release
