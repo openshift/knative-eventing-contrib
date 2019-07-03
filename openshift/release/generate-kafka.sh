@@ -18,5 +18,5 @@ fi
 resolve_resources config/ $output_file $image_prefix $release
 
 # Apache Kafka Source
-resolve_resources contrib/kafka/config/ kafka-resolved.yaml $image_prefix $release
+resolve_resources kafka/source/config/ kafka-resolved.yaml $image_prefix $release
 cat kafka-resolved.yaml >> $output_file
