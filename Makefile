@@ -44,9 +44,12 @@ install:
 	go install $(CORE_IMAGES)
 	go build -o $(GOPATH)/bin/kafka-source-controller ./kafka/source/cmd/controller
 	go build -o $(GOPATH)/bin/kafka-source-adapter ./kafka/source/cmd/receive_adapter
+	go build -o $(GOPATH)/bin/kafka-channel-controller ./kafka/channel/cmd/channel_controller
+	go build -o $(GOPATH)/bin/kafka-channel-dispatcher ./kafka/channel/cmd/channel_dispatcher
+	go build -o $(GOPATH)/bin/kafka-channel-webhook ./kafka/channel/cmd/webhook
 	go build -o $(GOPATH)/bin/camel-source-controller ./camel/source/cmd/controller
-	go build -o $(GOPATH)/bin/github-source-controller ./contrib/github/cmd/controller
-	go build -o $(GOPATH)/bin/github-receive-adapter ./contrib/github/cmd/receive_adapter
+	go build -o $(GOPATH)/bin/github-source-controller ./github/cmd/controller
+	go build -o $(GOPATH)/bin/github-receive-adapter ./github/cmd/receive_adapter
 source.adapter: install
 
 test-install:
@@ -65,6 +68,9 @@ generate-dockerfiles:
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images $(CORE_IMAGES)
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-source-adapter
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-source-controller
+	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-channel-controller
+	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-channel-dispatcher
+	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-channel-webhook
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images camel-source-controller
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images github-receive-adapter
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images github-source-controller
@@ -73,7 +79,8 @@ generate-dockerfiles:
 
 # Generates a ci-operator configuration for a specific branch.
 generate-ci-config:
-	./openshift/ci-operator/generate-ci-config.sh $(BRANCH) > ci-operator-config.yaml
+	./openshift/ci-operator/generate-ci-config.sh $(BRANCH) 4.1 > ci-operator-config_41.yaml
+	./openshift/ci-operator/generate-ci-config.sh $(BRANCH) 4.2 > ci-operator-config_42.yaml
 .PHONY: generate-ci-config
 
 # Generate an aggregated knative yaml file with replaced image references
