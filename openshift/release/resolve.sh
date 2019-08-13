@@ -18,17 +18,13 @@ function resolve_resources(){
     # 2. Rewrite image references
     # 3. Remove comment lines
     # 4. Remove empty lines
-    sed -e "s+\(.* image: \)\(github.com\)\(.*/\)\(test/\)\(.*\)+\1\2 \3\4test-\5+g" \
-        -e "s+github.com/knative/eventing-sources/contrib/camel/cmd/controller+${image_prefix}camel-source-controller${image_tag}+" \
-        -e "s+github.com/knative/eventing-sources/kafka/source/cmd/receive_adapter+${image_prefix}kafka-source-adapter${image_tag}+" \
-        -e "s+github.com/knative/eventing-sources/kafka/source/cmd/controller+${image_prefix}kafka-source-controller${image_tag}+" \
-        -e "s+github.com/knative/eventing-sources/contrib/github/cmd/github_receive_adapter+${image_prefix}github-receive-adapter${image_tag}+" \
-        -e "s+github.com/knative/eventing-contrib/camel/source/cmd/controller+${image_prefix}camel-source-controller${image_tag}+" \
-        -e "s+github.com/knative/eventing-contrib/kafka/source/cmd/receive_adapter+${image_prefix}kafka-source-adapter${image_tag}+" \
-        -e "s+github.com/knative/eventing-contrib/kafka/source/cmd/controller+${image_prefix}kafka-source-controller${image_tag}+" \
-        -e "s+github.com/knative/eventing-contrib/contrib/github/cmd/github_receive_adapter+${image_prefix}github-receive-adapter${image_tag}+" \
-        -e "s+\(.* image: \)\(github.com\)\(.*/\)\(.*\)+\1${image_prefix}\4${image_tag}+g" \
-        -e "s+\(.* value: \)\(github.com\)\(.*/\)\(.*\)+\1${image_prefix}\4${image_tag}+g" \
+    sed -e "s+\(.* image: \)\(knative.dev\)\(.*/\)\(test/\)\(.*\)+\1\2 \3\4test-\5+g" \
+       -e "s+knative.dev/eventing-contrib/camel/source/cmd/controller+${image_prefix}camel-source-controller${image_tag}+" \
+        -e "s+knative.dev/eventing-contrib/kafka/source/cmd/receive_adapter+${image_prefix}kafka-source-adapter${image_tag}+" \
+        -e "s+knative.dev/eventing-contrib/kafka/source/cmd/controller+${image_prefix}kafka-source-controller${image_tag}+" \
+        -e "s+knative.dev/eventing-contrib/github/cmd/github_receive_adapter+${image_prefix}github-receive-adapter${image_tag}+" \
+        -e "s+\(.* image: \)\(knative.dev\)\(.*/\)\(.*\)+\1${image_prefix}\4${image_tag}+g" \
+        -e "s+\(.* value: \)\(knative.dev\)\(.*/\)\(.*\)+\1${image_prefix}\4${image_tag}+g" \
         -e '/^[ \t]*#/d' \
         -e '/^[ \t]*$/d' \
         "$yaml" >> $resolved_file_name
