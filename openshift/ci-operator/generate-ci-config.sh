@@ -19,7 +19,7 @@ base_images:
 build_root:
   project_image:
     dockerfile_path: openshift/ci-operator/build-image/Dockerfile
-canonical_go_repository: knative.dev/eventing-contrib
+canonical_go_repository: github.com/knative/eventing-contrib
 binary_build_commands: make install
 test_binary_build_commands: make test-install
 tests:
