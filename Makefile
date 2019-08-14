@@ -48,8 +48,8 @@ install:
 	go build -o $(GOPATH)/bin/kafka-channel-dispatcher ./kafka/channel/cmd/channel_dispatcher
 	go build -o $(GOPATH)/bin/kafka-channel-webhook ./kafka/channel/cmd/webhook
 	go build -o $(GOPATH)/bin/camel-source-controller ./camel/source/cmd/controller
-	go build -o $(GOPATH)/bin/github-source-controller ./github/cmd/controller
-	go build -o $(GOPATH)/bin/github-receive-adapter ./github/cmd/receive_adapter
+	go build -o $(GOPATH)/bin/github-source-controller ./contrib/github/cmd/controller
+	go build -o $(GOPATH)/bin/github-receive-adapter ./contrib/github/cmd/receive_adapter
 source.adapter: install
 
 test-install:
