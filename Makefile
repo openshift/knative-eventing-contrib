@@ -44,6 +44,8 @@ install:
 	go install $(CORE_IMAGES)
 	go build -o $(GOPATH)/bin/kafka-source-controller ./kafka/source/cmd/controller
 	go build -o $(GOPATH)/bin/kafka-source-adapter ./kafka/source/cmd/receive_adapter
+	go build -o $(GOPATH)/bin/kafka-ccp-channel-controller ./kafka/channel/cmd/controller
+	go build -o $(GOPATH)/bin/kafka-ccp-channel-dispatcher ./kafka/channel/cmd/dispatcher
 	go build -o $(GOPATH)/bin/kafka-channel-controller ./kafka/channel/cmd/channel_controller
 	go build -o $(GOPATH)/bin/kafka-channel-dispatcher ./kafka/channel/cmd/channel_dispatcher
 	go build -o $(GOPATH)/bin/kafka-channel-webhook ./kafka/channel/cmd/webhook
@@ -68,6 +70,8 @@ generate-dockerfiles:
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images $(CORE_IMAGES)
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-source-adapter
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-source-controller
+	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-ccp-channel-controller
+	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-ccp-channel-dispatcher
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-channel-controller
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-channel-dispatcher
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-channel-webhook
