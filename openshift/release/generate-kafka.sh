@@ -16,11 +16,17 @@ else
 fi
 
 # Apache Kafka Source
-resolve_resources kafka/source/config/ kafka-resolved.yaml $image_prefix $release
-cat kafka-resolved.yaml >> $output_file
-rm kafka-resolved.yaml
+resolve_resources kafka/source/config kafka-src-resolved.yaml $image_prefix $release
+cat kafka-src-resolved.yaml >> $output_file
+rm kafka-src-resolved.yaml
 
-# Apache Kafka Source
-resolve_resources kafka/channel/config/ kafka-resolved.yaml $image_prefix $release
-cat kafka-resolved.yaml >> $output_file
-rm kafka-resolved.yaml
+# Apache Kafka Channel CCP
+resolve_resources kafka/channel/config/provisioner kafka-ccp-resolved.yaml $image_prefix $release
+cat kafka-ccp-resolved.yaml >> $output_file
+rm kafka-ccp-resolved.yaml
+
+
+# Apache Kafka Channel CRD
+resolve_resources kafka/channel/config kafka-crd-resolved.yaml $image_prefix $release
+cat kafka-crd-resolved.yaml >> $output_file
+rm kafka-crd-resolved.yaml

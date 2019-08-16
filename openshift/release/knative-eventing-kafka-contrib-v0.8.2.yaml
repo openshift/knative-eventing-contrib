@@ -285,6 +285,219 @@ spec:
       serviceAccount: kafka-controller-manager
       terminationGracePeriodSeconds: 10
 ---
+apiVersion: eventing.knative.dev/v1alpha1
+kind: ClusterChannelProvisioner
+metadata:
+  name: kafka
+  labels:
+    contrib.eventing.knative.dev/release: devel
+spec: {}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kafka-channel-controller
+  namespace: knative-eventing
+  labels:
+    contrib.eventing.knative.dev/release: devel
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: kafka-channel-controller
+  labels:
+    contrib.eventing.knative.dev/release: devel
+rules:
+  - apiGroups:
+      - eventing.knative.dev
+    resources:
+      - channels
+      - channels/status
+      - clusterchannelprovisioners
+      - clusterchannelprovisioners/status
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+  - apiGroups:
+      - eventing.knative.dev
+    resources:
+      - channels/finalizers
+      - clusterchannelprovisioners/finalizers
+    verbs:
+      - update
+  - apiGroups:
+      - "" # Core API group.
+    resources:
+      - services
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+  - apiGroups:
+      - "" # Core API group.
+    resources:
+      - services
+    verbs:
+      - update
+  - apiGroups:
+      - "" # Core API Group.
+    resources:
+      - configmaps
+    resourceNames:
+      - kafka-channel-dispatcher
+    verbs:
+      - update
+  - apiGroups:
+      - "" # Core API Group.	
+    resources:
+      - events	
+    verbs:
+      - create	
+      - patch	
+      - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kafka-channel-controller-manage
+  labels:
+    contrib.eventing.knative.dev/release: devel
+subjects:
+  - kind: ServiceAccount
+    name: kafka-channel-controller
+    namespace: knative-eventing
+roleRef:
+  kind: ClusterRole
+  name: kafka-channel-controller
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-channel-controller-config
+  namespace: knative-eventing
+  labels:
+    contrib.eventing.knative.dev/release: devel
+data:
+  bootstrapServers: REPLACE_WITH_CLUSTER_URL
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-channel-controller
+  namespace: knative-eventing
+  labels:
+    contrib.eventing.knative.dev/release: devel
+spec:
+  replicas: 1
+  selector:
+    matchLabels: &labels
+      app: kafka-channel-controller
+  template:
+    metadata:
+      labels: *labels
+    spec:
+      serviceAccountName: kafka-channel-controller
+      containers:
+      - name: kafka-channel-controller-controller
+        image: quay.io/openshift-knative/knative-eventing-contrib-kafka-ccp-channel-controller:v0.8.2
+        volumeMounts:
+          - name: kafka-channel-controller-config
+            mountPath: /etc/config-provisioner
+        env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+      volumes:
+        - name: kafka-channel-controller-config
+          configMap:
+            name: kafka-channel-controller-config
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kafka-channel-dispatcher
+  namespace: knative-eventing
+  labels:
+    contrib.eventing.knative.dev/release: devel
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kafka-channel-dispatcher
+  labels:
+    contrib.eventing.knative.dev/release: devel
+rules:
+  - apiGroups:
+      - "" # Core API group.
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - eventing.knative.dev
+    resources:
+      - channels
+    verbs:
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kafka-channel-dispatcher
+  labels:
+    contrib.eventing.knative.dev/release: devel
+subjects:
+  - kind: ServiceAccount
+    name: kafka-channel-dispatcher
+    namespace: knative-eventing
+roleRef:
+  kind: ClusterRole
+  name: kafka-channel-dispatcher
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-channel-dispatcher
+  namespace: knative-eventing
+  labels:
+    contrib.eventing.knative.dev/release: devel
+spec:
+  replicas: 1
+  selector:
+    matchLabels: &labels
+      clusterChannelProvisioner: kafka
+      role: dispatcher
+  template:
+    metadata:
+      labels: *labels
+    spec:
+      serviceAccountName: kafka-channel-dispatcher
+      containers:
+        - name: dispatcher
+          image: quay.io/openshift-knative/knative-eventing-contrib-kafka-ccp-channel-dispatcher:v0.8.2
+          env:
+            - name: SYSTEM_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          volumeMounts:
+            - name: kafka-channel-controller-config
+              mountPath: /etc/config-provisioner
+      volumes:
+        - name: kafka-channel-controller-config
+          configMap:
+            name: kafka-channel-controller-config
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -714,7 +927,7 @@ spec:
       serviceAccountName: kafka-ch-controller
       containers:
         - name: controller
-          image: quay.io/openshift-knative/knative-eventing-contrib-channel_controller:v0.8.2
+          image: quay.io/openshift-knative/knative-eventing-contrib-kafka-channel-controller:v0.8.2
           env:
           - name: CONFIG_LOGGING_NAME
             value: config-logging
@@ -756,7 +969,7 @@ spec:
       serviceAccountName: kafka-ch-dispatcher
       containers:
         - name: dispatcher
-          image: quay.io/openshift-knative/knative-eventing-contrib-channel_dispatcher:v0.8.2
+          image: quay.io/openshift-knative/knative-eventing-contrib-kafka-channel-dispatcher:v0.8.2
           env:
             - name: CONFIG_LOGGING_NAME
               value: config-logging
@@ -800,7 +1013,7 @@ spec:
       containers:
       - name: kafka-webhook
         terminationMessagePolicy: FallbackToLogsOnError
-        image: quay.io/openshift-knative/knative-eventing-contrib-webhook:v0.8.2
+        image: quay.io/openshift-knative/knative-eventing-contrib-kafka-channel-webhook:v0.8.2
         volumeMounts:
         - name: config-logging
           mountPath: /etc/config-logging
