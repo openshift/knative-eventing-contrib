@@ -4,7 +4,6 @@ source $(dirname $0)/resolve.sh
 
 release=$1
 
-#image_prefix="quay.io/openshift-knative/knative-eventing-sources-"
 output_file="openshift/release/knative-eventing-camel-sources-${release}.yaml"
 
 if [ $release = "ci" ]; then
