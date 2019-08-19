@@ -4,14 +4,13 @@ source $(dirname $0)/resolve.sh
 
 release=$1
 
-#image_prefix="quay.io/openshift-knative/knative-eventing-contrib-"
 output_file="openshift/release/knative-eventing-camel-sources-${release}.yaml"
 
 if [ $release = "ci" ]; then
-    image_prefix="image-registry.openshift-image-registry.svc:5000/knative-eventing/knative-eventing-contrib-"
+    image_prefix="image-registry.openshift-image-registry.svc:5000/knative-eventing/knative-eventing-sources-"
     tag=""
 else
-    image_prefix="quay.io/openshift-knative/knative-eventing-contrib-"
+    image_prefix="quay.io/openshift-knative/knative-eventing-sources-"
     tag=$release
 fi
 
