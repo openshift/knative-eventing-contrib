@@ -53,9 +53,10 @@ install:
 source.adapter: install
 
 test-install:
-	for img in $(TEST_IMAGES); do \
-		go install $$img ; \
-	done
+	echo "skipped"
+#	for img in $(TEST_IMAGES); do \
+#		go install $$img ; \
+#	done
 .PHONY: test-install
 
 # Run E2E tests on OpenShift
@@ -74,7 +75,7 @@ generate-dockerfiles:
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images camel-source-controller
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images github-receive-adapter
 	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images github-source-controller
-	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-test-images $(TEST_IMAGES)
+#	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-test-images $(TEST_IMAGES)
 .PHONY: generate-dockerfiles
 
 # Generates a ci-operator configuration for a specific branch.
