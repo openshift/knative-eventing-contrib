@@ -1,34 +1,66 @@
 aliases:
-  # These aliases are for OWNERS of the various Source implementations. These
-  # Are in addition to the repo level OWNERS.
+  eventing-sources-approvers:
+  - alanfx
+  - mgencur
+  - mvinkler
+  - maschmid
+  - bbrowning
+  - jcrossley3
+  - bobmcwhirter
+  - markusthoemmes
+  - vdemeester
+  - evanchooly
+  - arilivigni
+  - matzew
+  - lberk
+  - alanconway
+  - syedriko
+  eventing-sources-reviewers:
+  - alanfx
+  - mgencur
+  - mvinkler
+  - maschmid
+  - bbrowning
+  - jcrossley3
+  - bobmcwhirter
+  - markusthoemmes
+  - vdemeester
+  - evanchooly
+  - arilivigni
+  - matzew
+  - lberk
+  - alanconway
+  - syedriko
+  eventing-contrib-approvers:
+  - alanfx
+  - mgencur
+  - mvinkler
+  - maschmid
+  - bbrowning
+  - jcrossley3
+  - bobmcwhirter
+  - markusthoemmes
+  - vdemeester
+  - evanchooly
+  - arilivigni
+  - matzew
+  - lberk
+  - alanconway
+  - syedriko
+  eventing-contrib-reviewers:
+  - alanfx
+  - mgencur
+  - mvinkler
+  - maschmid
+  - bbrowning
+  - jcrossley3
+  - bobmcwhirter
+  - markusthoemmes
+  - vdemeester
+  - evanchooly
+  - arilivigni
+  - matzew
+  - lberk
+  - alanconway
+  - syedriko
 
-  github-approvers:
-    - bbrowning
-  github-reviewers:
-    - bbrowning
-    - rootfs
-
-  kafka-approvers:
-    - bbrowning
-    - matzew
-  kafka-reviewers:
-    - bbrowning
-    - matzew
-
-  natss-approvers:
-    - Abd4llA
-  natss-reviewers:
-    - Abd4llA
-
-  productivity-approvers:
-  - adrcunha
-  - chaodaiG
-  - srinivashegde86
-  productivity-reviewers:
-  - adrcunha
-  - chaodaiG
-  - coryrc
-  - Fredy-Z
-  - srinivashegde86
-  - steuhs
-  - yt3liu
