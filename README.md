@@ -55,12 +55,8 @@ creating all the Dockerfiles needed automatically. The files now need
 to be committed to the branch that CI is being setup for.
 
 The basic ci-operator configs mentioned above are generated via the
-generate-release.sh file in the openshift/knative-eventing
-repository. They are generated to alleviate the burden of having to
-add all possible test images to the manifest manually, which is error
-prone.
-
-Once the file is generated, it must be committed to the
+`openshift/release/generate-*.sh` files.
+Once the files are generated, they must be committed to the
 [openshift/release](https://github.com/openshift/release) repository, as the other manifests linked above. The
 naming schema is `openshift-knative-eventing-contrib-BRANCH.yaml`, thus the
 files existing already correspond to our existing releases and the
@@ -86,9 +82,11 @@ this PR is merged, the CI setup for that branch is active.
 
 ### High-level steps for a release
 
+There are [detailed steps](openshift/release/README.md) for some of this procedure.
+
 #### Building upstream
 
-1. Create a release branch from the upstream’s release tag, i.e. release-v0.5.0. This is created in the fork that we maintain of upstream. See our branching instructions for deeper information.
+1. Create a release branch from the upstream’s release tag, i.e. release-v0.5.0. This is created in the fork that we maintain of upstream.
 2. Create a CI job for that branch in openshift/release. See our CI setup instructions for deeper information.
 3. Do whatever you need to do to make this CI pass
 4. Create a “dummy” PR with a ci file, which contains the current output of “date”. This is to trigger CI explicitly.

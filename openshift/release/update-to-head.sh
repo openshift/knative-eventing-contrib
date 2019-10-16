@@ -14,7 +14,9 @@ git checkout upstream/master -B release-next
 git fetch openshift master
 git checkout openshift/master openshift OWNERS_ALIASES OWNERS Makefile
 make generate-dockerfiles
-make RELEASE=ci generate-release
+make RELEASE=ci generate-kafka
+make RELEASE=ci generate-camel
+
 git add openshift OWNERS_ALIASES OWNERS Makefile
 git commit -m ":open_file_folder: Update openshift specific files."
 git push -f openshift release-next

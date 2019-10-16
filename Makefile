@@ -4,7 +4,13 @@
 CGO_ENABLED=0
 GOOS=linux
 CORE_IMAGES=$(shell find ./cmd -mindepth 1 -maxdepth 1 -type d)
-TEST_IMAGES=$(shell find ./test/test_images -mindepth 1 -maxdepth 1 -type d)
+# There may not be any test images so ignore errors
+TEST_IMAGES=$(shell find ./test/test_images -mindepth 1 -maxdepth 1 -type d 2> /dev/null)
+LOCAL_IMAGES=\
+	kafka-source-adapter kafka-source-controller \
+	kafka-channel-controller kafka-channel-dispatcher kafka-channel-webhook \
+	camel-source-controller \
+	github-receive-adapter github-source-controller
 
 all: generate manifests test verify
 
@@ -13,7 +19,7 @@ test: generate manifests verify
 	go test ./pkg/... ./cmd/... -coverprofile cover.out
 
 # Deploy default
-deploy: manifests
+nndeploy: manifests
 	kustomize build config/default | ko apply -f /dev/stdin
 
 # Generate manifests e.g. CRD, RBAC etc.
@@ -39,7 +45,7 @@ verify-codegen:
 verify-manifests:
 	./hack/verify-manifests.sh
 
-# Install core images
+# Build and install commands.
 install:
 	go install $(CORE_IMAGES)
 	go build -o $(GOPATH)/bin/kafka-source-controller ./kafka/source/cmd/controller
@@ -53,10 +59,9 @@ install:
 source.adapter: install
 
 test-install:
-	echo "skipped"
-#	for img in $(TEST_IMAGES); do \
-#		go install $$img ; \
-#	done
+	for img in $(TEST_IMAGES); do \
+		go install $$img ; \
+	done
 .PHONY: test-install
 
 # Run E2E tests on OpenShift
@@ -66,16 +71,11 @@ test-e2e:
 
 # Generate Dockerfiles for images used by ci-operator. The files need to be committed manually.
 generate-dockerfiles:
-	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images $(CORE_IMAGES)
-	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-source-adapter
-	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-source-controller
-	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-channel-controller
-	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-channel-dispatcher
-	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images kafka-channel-webhook
-	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images camel-source-controller
-	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images github-receive-adapter
-	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images github-source-controller
-#	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-test-images $(TEST_IMAGES)
+	# Remove old images and re-generate, avoid stale images hanging around.
+	rm -rf openshift/ci-operator/knative-images/*
+	rm -rf openshift/ci-operator/knative-test-images/*
+	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-images $(CORE_IMAGES) $(LOCAL_IMAGES)
+	./openshift/ci-operator/generate-dockerfiles.sh openshift/ci-operator/knative-test-images $(TEST_IMAGES)
 .PHONY: generate-dockerfiles
 
 # Generates a ci-operator configuration for a specific branch.
@@ -84,15 +84,10 @@ generate-ci-config:
 	./openshift/ci-operator/generate-ci-config.sh $(BRANCH) 4.2 > ci-operator-config_42.yaml
 .PHONY: generate-ci-config
 
-# Generate an aggregated knative yaml file with replaced image references
-generate-release:
-	./openshift/release/generate-release.sh $(RELEASE)
-.PHONY: generate-release
-
 generate-kafka:
 	./openshift/release/generate-kafka.sh $(RELEASE)
-.PHONY: generate-release
+.PHONY: generate-kafka
 
 generate-camel:
 	./openshift/release/generate-camel.sh $(RELEASE)
-.PHONY: generate-release
+.PHONY: generate-camel
