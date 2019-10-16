@@ -4,7 +4,6 @@
 CGO_ENABLED=0
 GOOS=linux
 CORE_IMAGES=$(shell find ./cmd -mindepth 1 -maxdepth 1 -type d)
-TEST_IMAGES=$(shell find ./test/test_images -mindepth 1 -maxdepth 1 -type d)
 
 all: generate manifests test verify
 
@@ -53,10 +52,7 @@ install:
 source.adapter: install
 
 test-install:
-	echo "skipped"
-#	for img in $(TEST_IMAGES); do \
-#		go install $$img ; \
-#	done
+	@echo "test-install: nothing to do, no test images for contrib."
 .PHONY: test-install
 
 # Run E2E tests on OpenShift
@@ -84,15 +80,10 @@ generate-ci-config:
 	./openshift/ci-operator/generate-ci-config.sh $(BRANCH) 4.2 > ci-operator-config_42.yaml
 .PHONY: generate-ci-config
 
-# Generate an aggregated knative yaml file with replaced image references
-generate-release:
-	./openshift/release/generate-release.sh $(RELEASE)
-.PHONY: generate-release
-
 generate-kafka:
 	./openshift/release/generate-kafka.sh $(RELEASE)
-.PHONY: generate-release
+.PHONY: generate-kafka
 
 generate-camel:
 	./openshift/release/generate-camel.sh $(RELEASE)
-.PHONY: generate-release
+.PHONY: generate-camel
