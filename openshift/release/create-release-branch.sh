@@ -1,6 +1,7 @@
 #!/bin/bash
+# Usage: create-release-branch.sh v0.9.0 release-v0.9.0
 
-# Usage: create-release-branch.sh v0.4.1 release-0.4
+set -e # Exit immediately on error.
 
 release=$1
 target=$2
@@ -13,7 +14,6 @@ git checkout -b "$target" "$release"
 git fetch openshift master
 git checkout openshift/master -- openshift OWNERS_ALIASES OWNERS Makefile
 make generate-dockerfiles
-make RELEASE=$release generate-release
 make RELEASE=$release generate-kafka
 make RELEASE=$release generate-camel
 git add openshift OWNERS_ALIASES OWNERS Makefile

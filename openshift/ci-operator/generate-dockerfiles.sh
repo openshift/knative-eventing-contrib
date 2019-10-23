@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+set -e
 
 function generate_dockefiles() {
   local target_dir=$1; shift
