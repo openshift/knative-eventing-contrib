@@ -10,7 +10,7 @@ tag_specification:
 promotion:
   cluster: https://api.ci.openshift.org
   namespace: openshift
-  name: $branch-ocp-${openshift//./}
+  name: $branch
 base_images:
   base:
     name: '$openshift'
@@ -37,7 +37,7 @@ resources:
 images:
 EOF
 
-core_images=$(find ./openshift/ci-operator/knative-images -mindepth 1 -maxdepth 1 -type d)
+core_images=$(find ./openshift/ci-operator/knative-images -mindepth 1 -maxdepth 1 -type d 2>/dev/null)
 for img in $core_images; do
   image_base=$(basename $img)
   to_image=$(echo ${image_base//_/-})
@@ -53,7 +53,7 @@ for img in $core_images; do
 EOF
 done
 
-test_images=$(find ./openshift/ci-operator/knative-test-images -mindepth 1 -maxdepth 1 -type d)
+test_images=$(find ./openshift/ci-operator/knative-test-images -mindepth 1 -maxdepth 1 -type d 2>/dev/null)
 for img in $test_images; do
   image_base=$(basename $img)
   to_image=$(echo ${image_base//_/-})
