@@ -236,7 +236,7 @@ spec:
         control-plane: camel-controller-manager
     spec:
       containers:
-      - image: quay.io/openshift-knative/knative-eventing-contrib-camel-source-controller:v0.9.0
+      - image: quay.io/openshift-knative/knative-eventing-sources-camel-source-controller:v0.9.0
         name: manager
         resources:
           requests:
