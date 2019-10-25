@@ -273,10 +273,10 @@ spec:
       serviceAccountName: kafka-controller-manager
       containers:
       - name: manager
-        image: quay.io/openshift-knative/knative-eventing-contrib-kafka-source-controller:v0.9.0
+        image: quay.io/openshift-knative/knative-eventing-sources-kafka-source-controller:v0.9.0
         env:
         - name: KAFKA_RA_IMAGE
-          value: quay.io/openshift-knative/knative-eventing-contrib-kafka-source-adapter:v0.9.0
+          value: quay.io/openshift-knative/knative-eventing-sources-kafka-source-adapter:v0.9.0
         volumeMounts:
         resources:
           requests:
@@ -714,7 +714,7 @@ spec:
       serviceAccountName: kafka-ch-controller
       containers:
         - name: controller
-          image: quay.io/openshift-knative/knative-eventing-contrib-channel_controller:v0.9.0
+          image: quay.io/openshift-knative/knative-eventing-sources-kafka-channel-controller:v0.9.0
           env:
           - name: CONFIG_LOGGING_NAME
             value: config-logging
@@ -756,7 +756,7 @@ spec:
       serviceAccountName: kafka-ch-dispatcher
       containers:
         - name: dispatcher
-          image: quay.io/openshift-knative/knative-eventing-contrib-channel_dispatcher:v0.9.0
+          image: quay.io/openshift-knative/knative-eventing-sources-kafka-channel-dispatcher:v0.9.0
           env:
             - name: CONFIG_LOGGING_NAME
               value: config-logging
@@ -800,7 +800,7 @@ spec:
       containers:
       - name: kafka-webhook
         terminationMessagePolicy: FallbackToLogsOnError
-        image: quay.io/openshift-knative/knative-eventing-contrib-webhook:v0.9.0
+        image: quay.io/openshift-knative/knative-eventing-sources-kafka-channel-webhook:v0.9.0
         volumeMounts:
         - name: config-logging
           mountPath: /etc/config-logging
