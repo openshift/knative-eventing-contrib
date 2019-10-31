@@ -16,7 +16,6 @@ VER=$(echo $VERSION | sed 's/\./_/;s/\.[0-9]\+$//') # X_Y form of version
 OPENSHIFT=$(realpath "$1"); shift
 test -d "$OPENSHIFT/.git" || fail "'$OPENSHIFT' is not a git repo"
 MIRROR="$OPENSHIFT/core-services/image-mirroring/knative/mapping_knative_v${VER}_quay"
-test -w "$MIRROR" || fail "file '$MIRROR' is not writeable"
 CONFIGDIR=$OPENSHIFT/ci-operator/config/openshift/knative-eventing-contrib
 test -d "$CONFIGDIR" || fail "'$CONFIGDIR' is not a directory"
 
