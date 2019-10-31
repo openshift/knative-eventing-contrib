@@ -1,21 +1,10 @@
-approvers:
-- evankanderson
-- grantr
-- vaikas-google
-- vaikas
-- n3wscott
-- matzew
+# The OWNERS file is used by prow to automatically merge approved PRs.
 
-# Reviewers are suggested from the reviewers list first, then the approvers
-# list. To add reviewers while spreading the load among existing approvers,
-# copy the approvers to the reviewers list too.
+approvers:
+- eventing-sources-approvers
+- eventing-contrib-approvers
+
 reviewers:
-- evankanderson
-- grantr
-- vaikas-google
-- vaikas
-- n3wscott
-- matzew
-# Add reviewers below
-- Harwayne
-- lionelvillard
+- eventing-sources-reviewers
+- eventing-contrib-reviewers
+
