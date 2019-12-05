@@ -408,7 +408,7 @@ func (r *Reconciler) createTopic(ctx context.Context, channel *v1alpha1.KafkaCha
 		ReplicationFactor: channel.Spec.ReplicationFactor,
 		NumPartitions:     channel.Spec.NumPartitions,
 	}, false)
-	if err == sarama.ErrTopicAlreadyExists {
+	if e, ok := err.(*sarama.TopicError); ok && e.Err == sarama.ErrTopicAlreadyExists {
 		return nil
 	} else if err != nil {
 		logger.Error("Error creating topic", zap.String("topic", topicName), zap.Error(err))
