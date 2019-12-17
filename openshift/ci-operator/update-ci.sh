@@ -41,7 +41,7 @@ cd $OPENSHIFT
 echo "Generating PROW files in $OPENSHIFT"
 which docker 2> /dev/null || alias docker=podman
 docker pull registry.svc.ci.openshift.org/ci/ci-operator-prowgen:latest
-docker run -it -v "${PWD}/ci-operator:/ci-operator:z" registry.svc.ci.openshift.org/ci/ci-operator-prowgen:latest --from-dir /ci-operator/config --to-dir /ci-operator/jobs
+docker run -it -v "${PWD}/ci-operator:/ci-operator" registry.svc.ci.openshift.org/ci/ci-operator-prowgen:latest --from-dir /ci-operator/config --to-dir /ci-operator/jobs
 
 echo
 echo "NOTE: Commit changes and create a PR from $OPENSHIFT"
