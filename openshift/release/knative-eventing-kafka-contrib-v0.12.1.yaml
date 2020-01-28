@@ -345,7 +345,7 @@ spec:
             fieldRef:
               fieldPath: metadata.namespace
         - name: METRICS_DOMAIN
-          value: quay.io/openshift-knative/knative-eventing-sources-sources:v0.12.1
+          value: knative.dev/sources
         - name: CONFIG_OBSERVABILITY_NAME
           value: config-observability
         - name: KAFKA_RA_IMAGE
@@ -910,7 +910,7 @@ spec:
             - name: CONFIG_LOGGING_NAME
               value: config-logging
             - name: METRICS_DOMAIN
-              value: quay.io/openshift-knative/knative-eventing-sources-eventing:v0.12.1
+              value: knative.dev/eventing
             - name: SYSTEM_NAMESPACE
               valueFrom:
                 fieldRef:
@@ -957,7 +957,7 @@ spec:
             - name: CONFIG_LOGGING_NAME
               value: config-logging
             - name: METRICS_DOMAIN
-              value: quay.io/openshift-knative/knative-eventing-sources-eventing:v0.12.1
+              value: knative.dev/eventing
             - name: SYSTEM_NAMESPACE
               valueFrom:
                 fieldRef:
@@ -1050,7 +1050,7 @@ spec:
           - name: CONFIG_LOGGING_NAME
             value: config-logging
           - name: METRICS_DOMAIN
-            value: quay.io/openshift-knative/knative-eventing-sources-eventing:v0.12.1
+            value: knative.dev/eventing
           - name: WEBHOOK_NAME
             value: kafka-webhook
         ports:
