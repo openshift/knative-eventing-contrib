@@ -13,8 +13,6 @@ aliases:
   - arilivigni
   - matzew
   - lberk
-  - alanconway
-  - syedriko
   eventing-sources-reviewers:
   - alanfx
   - mgencur
@@ -29,8 +27,6 @@ aliases:
   - arilivigni
   - matzew
   - lberk
-  - alanconway
-  - syedriko
   eventing-contrib-approvers:
   - alanfx
   - mgencur
@@ -45,8 +41,6 @@ aliases:
   - arilivigni
   - matzew
   - lberk
-  - alanconway
-  - syedriko
   eventing-contrib-reviewers:
   - alanfx
   - mgencur
@@ -61,6 +55,4 @@ aliases:
   - arilivigni
   - matzew
   - lberk
-  - alanconway
-  - syedriko
 
