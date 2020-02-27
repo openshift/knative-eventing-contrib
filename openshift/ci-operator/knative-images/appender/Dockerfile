@@ -1,5 +1,5 @@
 # Do not edit! This file was generate via Makefile
 FROM openshift/origin-base
 
-ADD heartbeats /usr/bin/heartbeats
-ENTRYPOINT ["/usr/bin/heartbeats"]
+ADD appender /usr/bin/appender
+ENTRYPOINT ["/usr/bin/appender"]
