@@ -7,6 +7,8 @@ set -x
 function run_e2e_tests(){
   header "Running tests"
   echo "The E2E test suite is currently empty"
+  oc version
+  return 1
 }
 
 failed=0
