@@ -1,5 +1,5 @@
 # Do not edit! This file was generate via Makefile
-FROM registry.svc.ci.openshift.org/openshift/origin-v3.11:base
+FROM openshift/origin-base
 
 ADD kafka-channel-controller /usr/bin/kafka-channel-controller
 ENTRYPOINT ["/usr/bin/kafka-channel-controller"]
