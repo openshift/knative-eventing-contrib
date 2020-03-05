@@ -1,47 +1,54 @@
 aliases:
-  # These aliases are for OWNERS of the various Source implementations. These
-  # Are in addition to the repo level OWNERS.
+  eventing-sources-approvers:
+  - alanfx
+  - mgencur
+  - mvinkler
+  - maschmid
+  - jcrossley3
+  - bobmcwhirter
+  - markusthoemmes
+  - vdemeester
+  - evanchooly
+  - arilivigni
+  - matzew
+  - lberk
+  eventing-sources-reviewers:
+  - alanfx
+  - mgencur
+  - mvinkler
+  - maschmid
+  - jcrossley3
+  - bobmcwhirter
+  - markusthoemmes
+  - vdemeester
+  - evanchooly
+  - arilivigni
+  - matzew
+  - lberk
+  eventing-contrib-approvers:
+  - alanfx
+  - mgencur
+  - mvinkler
+  - maschmid
+  - jcrossley3
+  - bobmcwhirter
+  - markusthoemmes
+  - vdemeester
+  - evanchooly
+  - arilivigni
+  - matzew
+  - lberk
+  eventing-contrib-reviewers:
+  - alanfx
+  - mgencur
+  - mvinkler
+  - maschmid
+  - jcrossley3
+  - bobmcwhirter
+  - markusthoemmes
+  - vdemeester
+  - evanchooly
+  - arilivigni
+  - matzew
+  - lberk
 
-  github-approvers:
-    - bbrowning
-    - lberk
-  github-reviewers:
-    - bbrowning
-    - lberk
-    - rootfs
-
-  kafka-approvers:
-    - bbrowning
-    - lberk
-    - matzew
-  kafka-reviewers:
-    - bbrowning
-    - lberk
-    - matzew
-
-  natss-approvers:
-    - Abd4llA
-  natss-reviewers:
-    - Abd4llA
-
-  couchdb-approvers:
-    - lionelvillard
-  couchdb-reviewers:
-    - lionelvillard
-
-  prometheus-approvers:
-    - syedriko
-    - matzew
-  prometheus-reviewers:
-    - syedriko
-    - matzew
-
-  productivity-approvers:
-  - chaodaiG
-  - chizhg
-  productivity-reviewers:
-  - chaodaiG
-  - coryrc
-  - chizhg
-  - steuhs
-  - yt3liu
