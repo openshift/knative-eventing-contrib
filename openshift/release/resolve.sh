@@ -19,7 +19,8 @@ function resolve_resources(){
     # 3. Remove comment lines
     # 4. Remove empty lines
     sed -e "s+\(.* image: \)\(knative.dev\)\(.*/\)\(test/\)\(.*\)+\1\2 \3\4test-\5+g" \
-       -e "s+knative.dev/eventing-contrib/camel/source/cmd/controller+${image_prefix}camel-source-controller${image_tag}+" \
+        -e "s+ko://++" \
+        -e "s+knative.dev/eventing-contrib/camel/source/cmd/controller+${image_prefix}camel-source-controller${image_tag}+" \
         -e "s+knative.dev/eventing-contrib/kafka/source/cmd/receive_adapter+${image_prefix}kafka-source-adapter${image_tag}+" \
         -e "s+knative.dev/eventing-contrib/kafka/source/cmd/controller+${image_prefix}kafka-source-controller${image_tag}+" \
         -e "s+knative.dev/eventing-contrib/kafka/channel/cmd/channel_controller+${image_prefix}kafka-channel-controller${image_tag}+" \
@@ -27,7 +28,6 @@ function resolve_resources(){
         -e "s+knative.dev/eventing-contrib/kafka/channel/cmd/webhook+${image_prefix}kafka-channel-webhook${image_tag}+" \
         -e "s+knative.dev/eventing-contrib/github/cmd/github_receive_adapter+${image_prefix}github-receive-adapter${image_tag}+" \
         -e "s+\(.* image: \)\(knative.dev\)\(.*/\)\(.*\)+\1${image_prefix}\4${image_tag}+g" \
-        -e "s+\(.* value: \)\(knative.dev\)\(.*/\)\(.*\)+\1${image_prefix}\4${image_tag}+g" \
         -e '/^[ \t]*#/d' \
         -e '/^[ \t]*$/d' \
         "$yaml" >> $resolved_file_name
