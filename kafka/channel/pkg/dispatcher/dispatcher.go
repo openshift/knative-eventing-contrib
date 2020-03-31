@@ -81,7 +81,7 @@ type consumerMessageHandler struct {
 
 func (c consumerMessageHandler) Handle(ctx context.Context, message *sarama.ConsumerMessage) (bool, error) {
 	event := fromKafkaMessage(ctx, message)
-	return true, c.dispatcher.DispatchEventWithDelivery(ctx, *event, c.sub.SubscriberURI, c.sub.ReplyURI, &c.sub.Delivery)
+	return true, c.dispatcher.DispatchEvent(ctx, *event, c.sub.SubscriberURI, c.sub.ReplyURI)
 }
 
 var _ kafka.KafkaConsumerHandler = (*consumerMessageHandler)(nil)
@@ -92,7 +92,6 @@ type subscription struct {
 	UID           string
 	SubscriberURI string
 	ReplyURI      string
-	Delivery      eventingchannels.DeliveryOptions
 }
 
 // configDiff diffs the new config with the existing config. If there are no differences, then the
@@ -329,8 +328,20 @@ func (d *KafkaDispatcher) getChannelReferenceFromHost(host string) (eventingchan
 	return cr, nil
 }
 
+func stupidFilter(headers []*sarama.RecordHeader) string {
+	for _, header := range headers {
+		h := string(header.Key)
+		v := string(header.Value)
+		switch h {
+		case "ce_specversion":
+			return v
+		}
+	}
+	return "1.0"
+}
+
 func fromKafkaMessage(ctx context.Context, kafkaMessage *sarama.ConsumerMessage) *cloudevents.Event {
-	event := cloudevents.NewEvent(cloudevents.VersionV1)
+	event := cloudevents.NewEvent(stupidFilter(kafkaMessage.Headers))
 	for _, header := range kafkaMessage.Headers {
 		h := string(header.Key)
 		v := string(header.Value)
@@ -413,17 +424,11 @@ func addHeader(kafkaMessage *sarama.ProducerMessage, key, value string) {
 }
 
 func newSubscription(spec eventingduck.SubscriberSpec, name string, namespace string) subscription {
-	sub := subscription{
+	return subscription{
 		Name:          name,
 		Namespace:     namespace,
 		UID:           string(spec.UID),
 		SubscriberURI: spec.SubscriberURI.String(),
 		ReplyURI:      spec.ReplyURI.String(),
 	}
-	if spec.Delivery != nil {
-		sub.Delivery = eventingchannels.DeliveryOptions{
-			DeadLetterSink: spec.DeadLetterSinkURI.String(),
-		}
-	}
-	return sub
 }
