@@ -12,6 +12,7 @@ aliases:
   - arilivigni
   - matzew
   - lberk
+  - slinkydeveloper
   eventing-sources-reviewers:
   - alanfx
   - mgencur
@@ -25,6 +26,7 @@ aliases:
   - arilivigni
   - matzew
   - lberk
+  - slinkydeveloper
   eventing-contrib-approvers:
   - alanfx
   - mgencur
@@ -38,6 +40,7 @@ aliases:
   - arilivigni
   - matzew
   - lberk
+  - slinkydeveloper
   eventing-contrib-reviewers:
   - alanfx
   - mgencur
@@ -51,4 +54,5 @@ aliases:
   - arilivigni
   - matzew
   - lberk
+  - slinkydeveloper
 
