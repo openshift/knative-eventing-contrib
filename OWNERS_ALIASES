@@ -1,70 +1,58 @@
 aliases:
-  toc:
-  - evankanderson
-  - grantr
+  eventing-sources-approvers:
+  - alanfx
+  - mgencur
+  - mvinkler
+  - maschmid
+  - jcrossley3
+  - bobmcwhirter
   - markusthoemmes
-  - mattmoor
-  - tcnghia
+  - vdemeester
+  - evanchooly
+  - arilivigni
+  - matzew
+  - lberk
+  - devguyio
+  eventing-sources-reviewers:
+  - alanfx
+  - mgencur
+  - mvinkler
+  - maschmid
+  - jcrossley3
+  - bobmcwhirter
+  - markusthoemmes
+  - vdemeester
+  - evanchooly
+  - arilivigni
+  - matzew
+  - lberk
+  - devguyio
+  eventing-contrib-approvers:
+  - alanfx
+  - mgencur
+  - mvinkler
+  - maschmid
+  - jcrossley3
+  - bobmcwhirter
+  - markusthoemmes
+  - vdemeester
+  - evanchooly
+  - arilivigni
+  - matzew
+  - lberk
+  - devguyio
+  eventing-contrib-reviewers:
+  - alanfx
+  - mgencur
+  - mvinkler
+  - maschmid
+  - jcrossley3
+  - bobmcwhirter
+  - markusthoemmes
+  - vdemeester
+  - evanchooly
+  - arilivigni
+  - matzew
+  - lberk
+  - devguyio
 
-  # These aliases are for OWNERS of the various Source implementations. These
-  # Are in addition to the repo level OWNERS.
-
-  awssqs-approvers:
-    - lberk
-  awssqs-reviewers:
-    - lberk
-
-  camel-approvers:
-    - nicolaferraro
-    - matzew
-  camel-reviewers:
-    - nicolaferraro
-    - matzew
-
-  github-approvers:
-    - lberk
-    - mattmoor
-  github-reviewers:
-    - lberk
-    - rootfs
-
-  gitlab-approvers:
-    - sebgoa
-    - tzununbekov
-  gitlab-reviewers:
-    - sebgoa
-    - tzununbekov
-
-  kafka-approvers:
-    - lberk
-    - matzew
-  kafka-reviewers:
-    - lberk
-    - matzew
-
-  natss-approvers:
-    - Abd4llA
-  natss-reviewers:
-    - Abd4llA
-
-  couchdb-approvers:
-    - lionelvillard
-  couchdb-reviewers:
-    - lionelvillard
-
-  prometheus-approvers:
-    - syedriko
-    - matzew
-  prometheus-reviewers:
-    - syedriko
-    - matzew
-
-  productivity-approvers:
-  - chaodaiG
-  - chizhg
-  productivity-reviewers:
-  - chaodaiG
-  - coryrc
-  - chizhg
-  - steuhs
-  - yt3liu
