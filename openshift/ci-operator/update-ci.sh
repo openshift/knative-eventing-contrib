@@ -23,8 +23,9 @@ test -d "$CONFIGDIR" || fail "'$CONFIGDIR' is not a directory"
 CONFIG=$CONFIGDIR/openshift-knative-eventing-contrib-release-v$VERSION
 CURDIR=$(dirname $0)
 $CURDIR/generate-ci-config.sh knative-v$VERSION 4.3 > ${CONFIG}.yaml
-$CURDIR/generate-ci-config.sh knative-v$VERSION 4.4 > ${CONFIG}__4.4.yaml
-$CURDIR/generate-ci-config.sh knative-v$VERSION 4.5 > ${CONFIG}__4.5.yaml
+$CURDIR/generate-ci-config.sh knative-$VERSION 4.4 true > ${CONFIG}__44.yaml
+$CURDIR/generate-ci-config.sh knative-$VERSION 4.5 true > ${CONFIG}__45.yaml
+$CURDIR/generate-ci-config.sh knative-$VERSION 4.6 true > ${CONFIG}__46.yaml
 
 # Append missing lines to the mirror file.
 [ -n "$(tail -c1 $MIRROR)" ] && echo >> $MIRROR # Make sure there's a newline
@@ -40,12 +41,8 @@ done
 
 cd $OPENSHIFT
 echo "Generating PROW files in $OPENSHIFT"
-which docker 2> /dev/null || alias docker=podman
-docker pull registry.svc.ci.openshift.org/ci/ci-operator-prowgen:latest
-docker run -it -v "${PWD}/ci-operator:/ci-operator" registry.svc.ci.openshift.org/ci/ci-operator-prowgen:latest --from-dir /ci-operator/config --to-dir /ci-operator/jobs
-
-echo
-echo "NOTE: Commit changes and create a PR from $OPENSHIFT"
-echo
+make jobs
+make ci-operator-config
+echo "==== Changes made to $OPENSHIFT ===="
 git status
-
+echo "==== Commit changes to $OPENSHIFT and create a PR"

@@ -1,13 +1,18 @@
 #!/bin/bash
 
 branch=${1-'knative-v0.8.1'}
-openshift=${2-'4.2'}
+openshift=${2-'4.3'}
+promotion_disabled=${3-false}
 
 cat <<EOF
 tag_specification:
+  cluster: https://api.ci.openshift.org
   name: '$openshift'
   namespace: ocp
 promotion:
+  additional_images:
+    knative-eventing-src: src
+  disabled: $promotion_disabled
   cluster: https://api.ci.openshift.org
   namespace: openshift
   name: $branch
