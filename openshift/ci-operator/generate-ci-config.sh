@@ -11,7 +11,7 @@ tag_specification:
   namespace: ocp
 promotion:
   additional_images:
-    knative-eventing-src: src
+    knative-eventing-contrib-src: src
   disabled: $promotion_disabled
   cluster: https://api.ci.openshift.org
   namespace: openshift
