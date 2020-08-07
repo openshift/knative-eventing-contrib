@@ -68,7 +68,7 @@ test-install:
 
 # Run E2E tests on OpenShift
 test-e2e:
-	./openshift/e2e-tests-openshift.sh
+	./openshift/e2e-tests.sh
 .PHONY: test-e2e
 
 # Generate Dockerfiles for images used by ci-operator. The files need to be committed manually.
