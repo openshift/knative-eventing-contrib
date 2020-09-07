@@ -77,3 +77,13 @@ function install_serverless(){
   popd
   return $failed
 }
+
+function install_knative_kafka(){
+  header "Installing Knative Kafka components"
+  cat openshift/release/knative-eventing-kafka-contrib-ci.yaml \
+  | sed 's/namespace: .*/namespace: knative-eventing/' \
+  | sed 's/REPLACE_WITH_CLUSTER_URL/my-cluster-kafka-bootstrap.kafka:9092/' \
+  | oc apply --filename -
+
+  wait_until_pods_running $EVENTING_NAMESPACE || return 1
+}
