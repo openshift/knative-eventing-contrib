@@ -87,3 +87,26 @@ function install_knative_kafka(){
 
   wait_until_pods_running $EVENTING_NAMESPACE || return 1
 }
+
+function run_e2e_tests(){
+
+  oc get ns ${TEST_EVENTING_NAMESPACE} 2>/dev/null || TEST_EVENTING_NAMESPACE="knative-eventing"
+  sed "s/namespace: ${KNATIVE_DEFAULT_NAMESPACE}/namespace: ${TEST_EVENTING_NAMESPACE}/g" ${CONFIG_TRACING_CONFIG} > tmp.tracing.config.yaml
+  kubectl replace -f tmp.tracing.config.yaml
+  rm tmp.tracing.config.yaml
+  local test_name="${1:-}"
+  local run_command=""
+  local failed=0
+  local channels=messaging.knative.dev/v1alpha1:KafkaChannel,messaging.knative.dev/v1beta1:KafkaChannel
+
+  local common_opts=" -channels=$channels --kubeconfig $KUBECONFIG" ## --imagetemplate $TEST_IMAGE_TEMPLATE"
+  if [ -n "$test_name" ]; then
+      local run_command="-run ^(${test_name})$"
+  fi
+
+  go_test_e2e -timeout=90m -parallel=12 ./test/e2e \
+    "$run_command" \
+    $common_opts --dockerrepo "quay.io/openshift-knative" || failed=$?
+
+  return $failed
+}
