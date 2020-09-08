@@ -36,6 +36,7 @@ import (
 )
 
 func TestCamelSource(t *testing.T) {
+	t.Skip("Skipping for now")
 	const (
 		camelSourceName = "e2e-camelsource"
 		loggerPodName   = "e2e-camelsource-logger-pod"
