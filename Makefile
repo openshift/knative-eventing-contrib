@@ -13,7 +13,6 @@ OPENSHIFT=${CURDIR}/../../github.com/openshift/release
 LOCAL_IMAGES=\
 	kafka-source-adapter kafka-source-controller \
 	kafka-channel-controller kafka-channel-dispatcher kafka-channel-webhook \
-	camel-source-controller \
 	github-receive-adapter github-source-controller
 
 all: generate manifests test verify
@@ -57,7 +56,6 @@ install:
 	go build -o $(GOPATH)/bin/kafka-channel-controller ./kafka/channel/cmd/channel_controller
 	go build -o $(GOPATH)/bin/kafka-channel-dispatcher ./kafka/channel/cmd/channel_dispatcher
 	go build -o $(GOPATH)/bin/kafka-channel-webhook ./kafka/channel/cmd/webhook
-	go build -o $(GOPATH)/bin/camel-source-controller ./camel/source/cmd/controller
 	go build -o $(GOPATH)/bin/github-source-controller ./github/cmd/controller
 	go build -o $(GOPATH)/bin/github-receive-adapter ./github/cmd/receive_adapter
 source.adapter: install
@@ -86,7 +84,3 @@ update-ci:
 generate-kafka:
 	./openshift/release/generate-kafka.sh $(RELEASE)
 .PHONY: generate-kafka
-
-generate-camel:
-	./openshift/release/generate-camel.sh $(RELEASE)
-.PHONY: generate-camel
