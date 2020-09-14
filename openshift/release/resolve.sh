@@ -20,7 +20,6 @@ function resolve_resources(){
     # 4. Remove empty lines
     sed -e "s+\(.* image: \)\(knative.dev\)\(.*/\)\(test/\)\(.*\)+\1\2 \3\4test-\5+g" \
         -e "s+ko://++" \
-        -e "s+knative.dev/eventing-contrib/camel/source/cmd/controller+${image_prefix}camel-source-controller${image_tag}+" \
         -e "s+knative.dev/eventing-contrib/kafka/source/cmd/receive_adapter+${image_prefix}kafka-source-adapter${image_tag}+" \
         -e "s+knative.dev/eventing-contrib/kafka/source/cmd/controller+${image_prefix}kafka-source-controller${image_tag}+" \
         -e "s+knative.dev/eventing-contrib/kafka/channel/cmd/channel_controller+${image_prefix}kafka-channel-controller${image_tag}+" \
