@@ -15,6 +15,5 @@ git fetch openshift master
 git checkout openshift/master -- openshift OWNERS_ALIASES OWNERS Makefile
 make generate-dockerfiles
 make RELEASE=$release generate-kafka
-make RELEASE=$release generate-camel
 git add openshift OWNERS_ALIASES OWNERS Makefile
 git commit -m "Add openshift specific files."
