@@ -69,6 +69,7 @@ function install_serverless(){
   local operator_dir=/tmp/serverless-operator
   local failed=0
   git clone --branch release-1.9 https://github.com/openshift-knative/serverless-operator.git $operator_dir
+  cp openshift/serverless.bash $operator_dir/hack/lib/serverless.bash
   # unset OPENSHIFT_BUILD_NAMESPACE as its used in serverless-operator's CI environment as a switch
   # to use CI built images, we want pre-built images of k-s-o and k-o-i
   unset OPENSHIFT_BUILD_NAMESPACE
@@ -76,6 +77,18 @@ function install_serverless(){
   ./hack/install.sh && header "Serverless Operator installed successfully" || failed=1
   popd
   return $failed
+}
+
+function install_knative_eventing(){
+  header "Installing Knative Eventing 0.17.2"
+
+  oc apply -f https://raw.githubusercontent.com/openshift/knative-eventing/release-v0.17.2/openshift/release/knative-eventing-ci.yaml
+  oc apply -f https://raw.githubusercontent.com/openshift/knative-eventing/release-v0.17.2/openshift/release/knative-eventing-mtbroker-ci.yaml
+
+  # Wait for 5 pods to appear first
+  timeout_non_zero 900 '[[ $(oc get pods -n $EVENTING_NAMESPACE --no-headers | wc -l) -lt 5 ]]' || return 1
+  wait_until_pods_running $EVENTING_NAMESPACE || return 1
+
 }
 
 function install_knative_kafka(){
