@@ -86,7 +86,7 @@ function install_knative_eventing(){
   oc apply -f https://raw.githubusercontent.com/openshift/knative-eventing/release-v0.17.2/openshift/release/knative-eventing-mtbroker-ci.yaml
 
   # Wait for 5 pods to appear first
-  timeout_non_zero 900 '[[ $(oc get pods -n $EVENTING_NAMESPACE --no-headers | wc -l) -lt 5 ]]' || return 1
+  timeout 900 '[[ $(oc get pods -n $EVENTING_NAMESPACE --no-headers | wc -l) -lt 5 ]]' || return 1
   wait_until_pods_running $EVENTING_NAMESPACE || return 1
 
 }
