@@ -25,7 +25,6 @@ function resolve_resources(){
         -e "s+knative.dev/eventing-contrib/kafka/channel/cmd/channel_controller+${image_prefix}kafka-channel-controller${image_tag}+" \
         -e "s+knative.dev/eventing-contrib/kafka/channel/cmd/channel_dispatcher+${image_prefix}kafka-channel-dispatcher${image_tag}+" \
         -e "s+knative.dev/eventing-contrib/kafka/channel/cmd/webhook+${image_prefix}kafka-channel-webhook${image_tag}+" \
-        -e "s+knative.dev/eventing-contrib/github/cmd/github_receive_adapter+${image_prefix}github-receive-adapter${image_tag}+" \
         -e "s+\(.* image: \)\(knative.dev\)\(.*/\)\(.*\)+\1${image_prefix}\4${image_tag}+g" \
         -e '/^[ \t]*#/d' \
         -e '/^[ \t]*$/d' \
