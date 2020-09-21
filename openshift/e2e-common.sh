@@ -51,17 +51,17 @@ function timeout() {
 function install_strimzi(){
   strimzi_version=`curl https://github.com/strimzi/strimzi-kafka-operator/releases/latest |  awk -F 'tag/' '{print $2}' | awk -F '"' '{print $1}' 2>/dev/null`
   header_text "Strimzi install"
-  kubectl create namespace kafka
-  kubectl -n kafka apply --selector strimzi.io/crd-install=true -f "https://github.com/strimzi/strimzi-kafka-operator/releases/download/${strimzi_version}/strimzi-cluster-operator-${strimzi_version}.yaml"
+  oc create namespace kafka
+  oc -n kafka apply --selector strimzi.io/crd-install=true -f "https://github.com/strimzi/strimzi-kafka-operator/releases/download/${strimzi_version}/strimzi-cluster-operator-${strimzi_version}.yaml"
   curl -L "https://github.com/strimzi/strimzi-kafka-operator/releases/download/${strimzi_version}/strimzi-cluster-operator-${strimzi_version}.yaml" \
   | sed 's/namespace: .*/namespace: kafka/' \
-  | kubectl -n kafka apply -f -
+  | oc -n kafka apply -f -
 
   header_text "Applying Strimzi Cluster file"
-  kubectl -n kafka apply -f "https://raw.githubusercontent.com/strimzi/strimzi-kafka-operator/${strimzi_version}/examples/kafka/kafka-persistent-single.yaml"
+  oc -n kafka apply -f "https://raw.githubusercontent.com/strimzi/strimzi-kafka-operator/${strimzi_version}/examples/kafka/kafka-persistent-single.yaml"
 
   header_text "Waiting for Strimzi to become ready"
-  sleep 5; while echo && kubectl get pods -n kafka | grep -v -E "(Running|Completed|STATUS)"; do sleep 5; done
+  sleep 5; while echo && oc get pods -n kafka | grep -v -E "(Running|Completed|STATUS)"; do sleep 5; done
 }
 
 function install_serverless(){
@@ -88,7 +88,6 @@ function install_knative_eventing(){
   # Wait for 5 pods to appear first
   timeout 900 '[[ $(oc get pods -n $EVENTING_NAMESPACE --no-headers | wc -l) -lt 5 ]]' || return 1
   wait_until_pods_running $EVENTING_NAMESPACE || return 1
-
 }
 
 function install_knative_kafka(){
@@ -114,7 +113,7 @@ function run_e2e_tests(){
 
   oc get ns ${TEST_EVENTING_NAMESPACE} 2>/dev/null || TEST_EVENTING_NAMESPACE="knative-eventing"
   sed "s/namespace: ${KNATIVE_DEFAULT_NAMESPACE}/namespace: ${TEST_EVENTING_NAMESPACE}/g" ${CONFIG_TRACING_CONFIG} > tmp.tracing.config.yaml
-  kubectl replace -f tmp.tracing.config.yaml
+  oc replace -f tmp.tracing.config.yaml
   rm tmp.tracing.config.yaml
   local test_name="${1:-}"
   local run_command=""
