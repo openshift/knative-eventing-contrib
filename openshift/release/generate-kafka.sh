@@ -10,8 +10,8 @@ if [ $release = "ci" ]; then
     image_prefix="registry.svc.ci.openshift.org/openshift/knative-nightly:knative-eventing-sources-"
     tag=""
 else
-    image_prefix="quay.io/openshift-knative/knative-eventing-sources-"
-    tag=$release
+    image_prefix="registry.svc.ci.openshift.org/openshift/knative-$release:knative-eventing-sources-"
+    tag=""
 fi
 
 # Apache Kafka Source
