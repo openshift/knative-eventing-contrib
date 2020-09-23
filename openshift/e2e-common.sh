@@ -93,7 +93,7 @@ function install_knative_eventing(){
 function install_knative_kafka(){
   header "Installing Knative Kafka components"
 
-  RELEASE_YAML="openshift/release/knative-eventing-kafka-contrib-v0.17.1.yaml"
+  RELEASE_YAML="openshift/release/knative-eventing-kafka-contrib-ci.yaml"
 
   sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-source-controller|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-source-controller}|g"   ${RELEASE_YAML}
   sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-source-adapter|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-source-adapter}|g"         ${RELEASE_YAML}
