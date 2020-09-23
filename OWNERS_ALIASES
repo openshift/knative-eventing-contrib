@@ -1,41 +1,61 @@
 aliases:
-  toc:
-  - evankanderson
-  - grantr
+  eventing-sources-approvers:
+  - alanfx
+  - mgencur
+  - mvinkler
+  - maschmid
+  - jcrossley3
+  - bobmcwhirter
   - markusthoemmes
-  - mattmoor
-  - tcnghia
-
-  # These aliases are for OWNERS of the various Source implementations. These
-  # Are in addition to the repo level OWNERS.
-
-  camel-approvers:
-    - nicolaferraro
-    - matzew
-  camel-reviewers:
-    - nicolaferraro
-    - matzew
-
-  kafka-approvers:
-    - lberk
-    - matzew
-  kafka-reviewers:
-    - lberk
-    - matzew
-
-  prometheus-approvers:
-    - syedriko
-    - matzew
-  prometheus-reviewers:
-    - syedriko
-    - matzew
-
-  productivity-approvers:
-  - chaodaiG
-  - chizhg
-  productivity-reviewers:
-  - chaodaiG
-  - coryrc
-  - chizhg
-  - steuhs
-  - yt3liu
+  - vdemeester
+  - evanchooly
+  - arilivigni
+  - matzew
+  - lberk
+  - slinkydeveloper
+  - devguyio
+  eventing-sources-reviewers:
+  - alanfx
+  - mgencur
+  - mvinkler
+  - maschmid
+  - jcrossley3
+  - bobmcwhirter
+  - markusthoemmes
+  - vdemeester
+  - evanchooly
+  - arilivigni
+  - matzew
+  - lberk
+  - slinkydeveloper
+  - devguyio
+  eventing-contrib-approvers:
+  - alanfx
+  - mgencur
+  - mvinkler
+  - maschmid
+  - jcrossley3
+  - bobmcwhirter
+  - markusthoemmes
+  - vdemeester
+  - evanchooly
+  - arilivigni
+  - matzew
+  - lberk
+  - slinkydeveloper
+  - devguyio
+  eventing-contrib-reviewers:
+  - alanfx
+  - mgencur
+  - mvinkler
+  - maschmid
+  - jcrossley3
+  - bobmcwhirter
+  - markusthoemmes
+  - vdemeester
+  - evanchooly
+  - arilivigni
+  - matzew
+  - lberk
+  - slinkydeveloper
+  - devguyio
