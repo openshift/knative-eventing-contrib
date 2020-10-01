@@ -1,35 +1,10 @@
-# In order to be an approver you need to be an approver in the eventing repo
-# or fulfill the requirements in https://github.com/knative/community/blob/master/ROLES.md#approver
+# The OWNERS file is used by prow to automatically merge approved PRs.
+
 approvers:
-- toc
-- grantr
-- Harwayne
-- vaikas
-- n3wscott
-- matzew
-- nachocano
-- lionelvillard
-- slinkydeveloper
-- lberk
-- pierDipi
-- aliok
+- eventing-sources-approvers
+- eventing-contrib-approvers
 
-# Reviewers are suggested from the reviewers list first, then the approvers
-# list. To add reviewers while spreading the load among existing approvers,
-# copy the approvers to the reviewers list too.
 reviewers:
-- grantr
-- Harwayne
-- vaikas
-- n3wscott
-- matzew
-- nachocano
-- lionelvillard
-- slinkydeveloper
-- lberk
-- pierDipi
-- aliok
-
-# Add reviewers below
-- aslom
+- eventing-sources-reviewers
+- eventing-contrib-reviewers
 
