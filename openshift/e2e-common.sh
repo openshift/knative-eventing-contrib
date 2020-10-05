@@ -50,17 +50,17 @@ function timeout() {
 
 function install_strimzi(){
   strimzi_version=`curl https://github.com/strimzi/strimzi-kafka-operator/releases/latest |  awk -F 'tag/' '{print $2}' | awk -F '"' '{print $1}' 2>/dev/null`
-  header_text "Strimzi install"
+  header "Strimzi install"
   oc create namespace kafka
   oc -n kafka apply --selector strimzi.io/crd-install=true -f "https://github.com/strimzi/strimzi-kafka-operator/releases/download/${strimzi_version}/strimzi-cluster-operator-${strimzi_version}.yaml"
   curl -L "https://github.com/strimzi/strimzi-kafka-operator/releases/download/${strimzi_version}/strimzi-cluster-operator-${strimzi_version}.yaml" \
   | sed 's/namespace: .*/namespace: kafka/' \
   | oc -n kafka apply -f -
 
-  header_text "Applying Strimzi Cluster file"
+  header "Applying Strimzi Cluster file"
   oc -n kafka apply -f "https://raw.githubusercontent.com/strimzi/strimzi-kafka-operator/${strimzi_version}/examples/kafka/kafka-persistent-single.yaml"
 
-  header_text "Waiting for Strimzi to become ready"
+  header "Waiting for Strimzi to become ready"
   sleep 5; while echo && oc get pods -n kafka | grep -v -E "(Running|Completed|STATUS)"; do sleep 5; done
 }
 
