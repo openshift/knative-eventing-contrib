@@ -112,9 +112,9 @@ function install_knative_kafka(){
 function run_e2e_tests(){
 
   oc get ns ${TEST_EVENTING_NAMESPACE} 2>/dev/null || TEST_EVENTING_NAMESPACE="knative-eventing"
-  sed "s/namespace: ${KNATIVE_DEFAULT_NAMESPACE}/namespace: ${TEST_EVENTING_NAMESPACE}/g" ${CONFIG_TRACING_CONFIG} > tmp.tracing.config.yaml
-  oc replace -f tmp.tracing.config.yaml
-  rm tmp.tracing.config.yaml
+  sed "s/namespace: ${KNATIVE_DEFAULT_NAMESPACE}/namespace: ${TEST_EVENTING_NAMESPACE}/g" ${CONFIG_TRACING_CONFIG} > /tmp/tmp.tracing.config.yaml
+  oc replace -f /tmp/tmp.tracing.config.yaml
+  rm /tmp/tmp.tracing.config.yaml
   local test_name="${1:-}"
   local run_command=""
   local failed=0
