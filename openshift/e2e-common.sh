@@ -125,7 +125,7 @@ function run_e2e_tests(){
 
   go_test_e2e -timeout=90m -parallel=12 ./test/e2e \
     "$run_command" \
-    $common_opts --dockerrepo "quay.io/openshift-knative" --tag "v0.17.1" || failed=$?
+    $common_opts --dockerrepo "quay.io/openshift-knative" --tag "v0.17" || failed=$?
 
   return $failed
 }
