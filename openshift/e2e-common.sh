@@ -127,5 +127,6 @@ function run_e2e_tests(){
     "$run_command" \
     $common_opts --dockerrepo "quay.io/openshift-knative" --tag "v0.17" || failed=$?
 
+  
   return $failed
 }
