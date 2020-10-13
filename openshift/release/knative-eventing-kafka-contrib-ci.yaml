@@ -1072,7 +1072,7 @@ metadata:
   labels:
     eventing.knative.dev/release: devel
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       messaging.knative.dev/channel: kafka-channel
