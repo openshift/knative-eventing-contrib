@@ -116,7 +116,7 @@ function run_e2e_tests(){
   local test_name="${1:-}"
   local run_command=""
   local failed=0
-  local channels=messaging.knative.dev/v1alpha1:KafkaChannel,messaging.knative.dev/v1beta1:KafkaChannel
+  local channels=messaging.knative.dev/v1beta1:KafkaChannel
 
   local common_opts=" -channels=$channels --kubeconfig $KUBECONFIG" ## --imagetemplate $TEST_IMAGE_TEMPLATE"
   if [ -n "$test_name" ]; then
