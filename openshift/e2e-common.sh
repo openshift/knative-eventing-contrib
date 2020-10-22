@@ -71,7 +71,8 @@ function install_serverless(){
   header "Installing Serverless Operator"
   local operator_dir=/tmp/serverless-operator
   local failed=0
-  git clone --branch release-1.9 https://github.com/openshift-knative/serverless-operator.git $operator_dir
+  git clone --branch release-1.10 https://github.com/openshift-knative/serverless-operator.git $operator_dir
+  cp openshift/serverless.bash $operator_dir/hack/lib/serverless.bash
   # unset OPENSHIFT_BUILD_NAMESPACE as its used in serverless-operator's CI environment as a switch
   # to use CI built images, we want pre-built images of k-s-o and k-o-i
   unset OPENSHIFT_BUILD_NAMESPACE
@@ -79,6 +80,17 @@ function install_serverless(){
   ./hack/install.sh && header "Serverless Operator installed successfully" || failed=1
   popd
   return $failed
+}
+
+function install_knative_eventing(){
+  header "Installing Knative Eventing 0.18.3"
+
+  oc apply -f https://raw.githubusercontent.com/openshift/knative-eventing/release-v0.18.3/openshift/release/knative-eventing-ci.yaml
+  oc apply -f https://raw.githubusercontent.com/openshift/knative-eventing/release-v0.18.3/openshift/release/knative-eventing-mtbroker-ci.yaml
+
+  # Wait for 5 pods to appear first
+  timeout 900 '[[ $(oc get pods -n $EVENTING_NAMESPACE --no-headers | wc -l) -lt 5 ]]' || return 1
+  wait_until_pods_running $EVENTING_NAMESPACE || return 1
 }
 
 function install_knative_kafka(){
@@ -98,4 +110,25 @@ function install_knative_kafka(){
   | oc apply --filename -
 
   wait_until_pods_running $EVENTING_NAMESPACE || return 1
+}
+
+function run_e2e_tests(){
+
+  oc get ns ${TEST_EVENTING_NAMESPACE} 2>/dev/null || TEST_EVENTING_NAMESPACE="knative-eventing"
+  sed "s/namespace: ${KNATIVE_DEFAULT_NAMESPACE}/namespace: ${TEST_EVENTING_NAMESPACE}/g" ${CONFIG_TRACING_CONFIG} | oc replace -f -
+  local test_name="${1:-}"
+  local run_command=""
+  local failed=0
+  local channels=messaging.knative.dev/v1beta1:KafkaChannel
+
+  local common_opts=" -channels=$channels --kubeconfig $KUBECONFIG" ## --imagetemplate $TEST_IMAGE_TEMPLATE"
+  if [ -n "$test_name" ]; then
+      local run_command="-run ^(${test_name})$"
+  fi
+
+  go_test_e2e -timeout=90m -parallel=4 ./test/e2e \
+    "$run_command" \
+    $common_opts --dockerrepo "quay.io/openshift-knative" --tag "v0.18" || failed=$?
+
+  return $failed
 }
