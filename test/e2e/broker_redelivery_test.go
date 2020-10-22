@@ -60,7 +60,7 @@ func ChannelBasedBrokerCreator(channel metav1.TypeMeta, brokerClass string) help
 }
 
 func TestBrokerRedelivery(t *testing.T) {
-	t.Skip("skipping potential flake")
+	//t.Skip("skipping potential flake")
 	channelTestRunner.RunTests(t, testlib.FeatureRedelivery, func(t *testing.T, component metav1.TypeMeta) {
 
 		brokerCreator := ChannelBasedBrokerCreator(component, eventing.MTChannelBrokerClassValue)
