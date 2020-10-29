@@ -27,6 +27,7 @@ func TestBrokerChannelFlowTriggerV1BrokerV1(t *testing.T) {
 	helpers.BrokerChannelFlowWithTransformation(t, "MTChannelBasedBroker", "v1", "v1", channelTestRunner)
 }
 func TestBrokerChannelFlowV1Beta1BrokerV1(t *testing.T) {
+	t.Skip("potential flake")
 	helpers.BrokerChannelFlowWithTransformation(t, "MTChannelBasedBroker", "v1", "v1beta1", channelTestRunner)
 }
 func TestBrokerChannelFlowTriggerV1Beta1BrokerV1Beta1(t *testing.T) {
