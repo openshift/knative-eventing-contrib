@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-export EVENTING_NAMESPACE=knative-eventing
+export EVENTING_NAMESPACE="${EVENTING_NAMESPACE:-knative-eventing}"
+export ZIPKIN_NAMESPACE=$EVENTING_NAMESPACE
 export OLM_NAMESPACE=openshift-marketplace
 
 function scale_up_workers(){
@@ -47,6 +48,83 @@ function timeout() {
   return 0
 }
 
+function install_tracing {
+  deploy_zipkin
+  enable_eventing_tracing
+}
+
+function deploy_zipkin {
+  logger.info "Installing Zipkin in namespace ${ZIPKIN_NAMESPACE}"
+  cat <<EOF | oc apply -f - || return $?
+apiVersion: v1
+kind: Service
+metadata:
+  name: zipkin
+  namespace: ${ZIPKIN_NAMESPACE}
+spec:
+  type: NodePort
+  ports:
+  - name: http
+    port: 9411
+  selector:
+    app: zipkin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zipkin
+  namespace: ${ZIPKIN_NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zipkin
+  template:
+    metadata:
+      labels:
+        app: zipkin
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+      - name: zipkin
+        image: docker.io/openzipkin/zipkin:2.13.0
+        ports:
+        - containerPort: 9411
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        resources:
+          limits:
+            memory: 1000Mi
+          requests:
+            memory: 256Mi
+---
+EOF
+
+  logger.info "Waiting until Zipkin is available"
+  kubectl wait deployment --all --timeout=600s --for=condition=Available -n ${ZIPKIN_NAMESPACE} || return 1
+}
+
+function enable_eventing_tracing {
+  header_text "Configuring tracing for Eventing"
+
+  cat <<EOF | oc apply -f - || return $?
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-tracing
+  namespace: ${EVENTING_NAMESPACE}
+data:
+  enable: "true"
+  zipkin-endpoint: "http://zipkin.${ZIPKIN_NAMESPACE}.svc.cluster.local:9411/api/v2/spans"
+  sample-rate: "1.0"
+  debug: "true"
+EOF
+}
 
 function install_strimzi(){
   strimzi_version=`curl https://github.com/strimzi/strimzi-kafka-operator/releases/latest |  awk -F 'tag/' '{print $2}' | awk -F '"' '{print $1}' 2>/dev/null`
@@ -126,7 +204,7 @@ function run_e2e_tests(){
       local run_command="-run ^(${test_name})$"
   fi
 
-  go_test_e2e -timeout=90m -parallel=4 ./test/e2e \
+  go_test_e2e -timeout=90m -parallel=20 ./test/e2e \
     "$run_command" \
     $common_opts --dockerrepo "quay.io/openshift-knative" --tag "v0.18" || failed=$?
 
