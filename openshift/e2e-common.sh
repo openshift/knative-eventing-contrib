@@ -204,7 +204,7 @@ function run_e2e_tests(){
       local run_command="-run ^(${test_name})$"
   fi
 
-  go_test_e2e -timeout=90m -parallel=20 ./test/e2e \
+  go_test_e2e -timeout=90m -parallel=12 ./test/e2e \
     "$run_command" \
     $common_opts --dockerrepo "quay.io/openshift-knative" --tag "v0.17" || failed=$?
 
