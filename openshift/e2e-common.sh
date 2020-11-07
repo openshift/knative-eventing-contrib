@@ -160,10 +160,10 @@ function install_serverless(){
 }
 
 function install_knative_eventing(){
-  header "Installing Knative Eventing 0.18.3"
+  header "Installing Knative Eventing 0.18.4"
 
-  oc apply -f https://raw.githubusercontent.com/openshift/knative-eventing/release-v0.18.3/openshift/release/knative-eventing-ci.yaml
-  oc apply -f https://raw.githubusercontent.com/openshift/knative-eventing/release-v0.18.3/openshift/release/knative-eventing-mtbroker-ci.yaml
+  oc apply -f https://raw.githubusercontent.com/openshift/knative-eventing/release-v0.18.4/openshift/release/knative-eventing-ci.yaml
+  oc apply -f https://raw.githubusercontent.com/openshift/knative-eventing/release-v0.18.4/openshift/release/knative-eventing-mtbroker-ci.yaml
 
   # Wait for 5 pods to appear first
   timeout 900 '[[ $(oc get pods -n $EVENTING_NAMESPACE --no-headers | wc -l) -lt 5 ]]' || return 1
