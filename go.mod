@@ -9,6 +9,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/golang/protobuf v1.4.2
 	github.com/google/go-cmp v0.5.2
+	github.com/google/gofuzz v1.1.0
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/websocket v1.4.2
 	github.com/influxdata/tdigest v0.0.1 // indirect
@@ -24,7 +25,7 @@ require (
 	k8s.io/apimachinery v0.18.8
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
 	k8s.io/utils v0.0.0-20200603063816-c1c6865ac451
-	knative.dev/eventing v0.18.0
+	knative.dev/eventing v0.18.5-0.20201106152308-911edb6d9ff2
 	knative.dev/pkg v0.0.0-20201026165741-2f75016c1368
 	knative.dev/test-infra v0.0.0-20200921012245-37f1a12adbd3
 )

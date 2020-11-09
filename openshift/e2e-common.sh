@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-export EVENTING_NAMESPACE=knative-eventing
-export OLM_NAMESPACE=openshift-marketplace
+export EVENTING_NAMESPACE="${EVENTING_NAMESPACE:-knative-eventing}"
+export ZIPKIN_NAMESPACE=$EVENTING_NAMESPACE
 
 function scale_up_workers(){
   local cluster_api_ns="openshift-machine-api"
@@ -47,10 +47,87 @@ function timeout() {
   return 0
 }
 
+function install_tracing {
+  deploy_zipkin
+  enable_eventing_tracing
+}
+
+function deploy_zipkin {
+  logger.info "Installing Zipkin in namespace ${ZIPKIN_NAMESPACE}"
+  cat <<EOF | oc apply -f - || return $?
+apiVersion: v1
+kind: Service
+metadata:
+  name: zipkin
+  namespace: ${ZIPKIN_NAMESPACE}
+spec:
+  type: NodePort
+  ports:
+  - name: http
+    port: 9411
+  selector:
+    app: zipkin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zipkin
+  namespace: ${ZIPKIN_NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zipkin
+  template:
+    metadata:
+      labels:
+        app: zipkin
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+      - name: zipkin
+        image: docker.io/openzipkin/zipkin:2.13.0
+        ports:
+        - containerPort: 9411
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        resources:
+          limits:
+            memory: 1000Mi
+          requests:
+            memory: 256Mi
+---
+EOF
+
+  logger.info "Waiting until Zipkin is available"
+  kubectl wait deployment --all --timeout=600s --for=condition=Available -n ${ZIPKIN_NAMESPACE} || return 1
+}
+
+function enable_eventing_tracing {
+  header "Configuring tracing for Eventing"
+
+  cat <<EOF | oc apply -f - || return $?
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-tracing
+  namespace: ${EVENTING_NAMESPACE}
+data:
+  enable: "true"
+  zipkin-endpoint: "http://zipkin.${ZIPKIN_NAMESPACE}.svc.cluster.local:9411/api/v2/spans"
+  sample-rate: "1.0"
+  debug: "true"
+EOF
+}
 
 function install_strimzi(){
   strimzi_version=`curl https://github.com/strimzi/strimzi-kafka-operator/releases/latest |  awk -F 'tag/' '{print $2}' | awk -F '"' '{print $1}' 2>/dev/null`
-  header_text "Strimzi install"
+  header "Strimzi install"
   oc create namespace kafka
   oc -n kafka apply --selector strimzi.io/crd-install=true -f "https://github.com/strimzi/strimzi-kafka-operator/releases/download/${strimzi_version}/strimzi-cluster-operator-${strimzi_version}.yaml"
   curl -L "https://github.com/strimzi/strimzi-kafka-operator/releases/download/${strimzi_version}/strimzi-cluster-operator-${strimzi_version}.yaml" \
@@ -60,10 +137,10 @@ function install_strimzi(){
   # Wait for the CRD we need to actually be active
   oc wait crd --timeout=-1s kafkas.kafka.strimzi.io --for=condition=Established
 
-  header_text "Applying Strimzi Cluster file"
+  header "Applying Strimzi Cluster file"
   oc -n kafka apply -f "https://raw.githubusercontent.com/strimzi/strimzi-kafka-operator/${strimzi_version}/examples/kafka/kafka-persistent.yaml"
 
-  header_text "Waiting for Strimzi to become ready"
+  header "Waiting for Strimzi to become ready"
   oc wait kafka --all --timeout=-1s --for=condition=Ready -n kafka
 }
 
@@ -71,22 +148,23 @@ function install_serverless(){
   header "Installing Serverless Operator"
   local operator_dir=/tmp/serverless-operator
   local failed=0
-  git clone --branch release-1.10 https://github.com/openshift-knative/serverless-operator.git $operator_dir
-  cp openshift/serverless.bash $operator_dir/hack/lib/serverless.bash
+  git clone --branch release-1.11 https://github.com/openshift-knative/serverless-operator.git $operator_dir
+  #cp openshift/serverless.bash $operator_dir/hack/lib/serverless.bash
   # unset OPENSHIFT_BUILD_NAMESPACE as its used in serverless-operator's CI environment as a switch
   # to use CI built images, we want pre-built images of k-s-o and k-o-i
   unset OPENSHIFT_BUILD_NAMESPACE
   pushd $operator_dir
-  ./hack/install.sh && header "Serverless Operator installed successfully" || failed=1
+
+  INSTALL_EVENTING="false" ./hack/install.sh && header "Serverless Operator installed successfully" || failed=1
   popd
   return $failed
 }
 
 function install_knative_eventing(){
-  header "Installing Knative Eventing 0.18.3"
+  header "Installing Knative Eventing 0.18.4"
 
-  oc apply -f https://raw.githubusercontent.com/openshift/knative-eventing/release-v0.18.3/openshift/release/knative-eventing-ci.yaml
-  oc apply -f https://raw.githubusercontent.com/openshift/knative-eventing/release-v0.18.3/openshift/release/knative-eventing-mtbroker-ci.yaml
+  oc apply -f https://raw.githubusercontent.com/openshift/knative-eventing/release-v0.18.4/openshift/release/knative-eventing-ci.yaml
+  oc apply -f https://raw.githubusercontent.com/openshift/knative-eventing/release-v0.18.4/openshift/release/knative-eventing-mtbroker-ci.yaml
 
   # Wait for 5 pods to appear first
   timeout 900 '[[ $(oc get pods -n $EVENTING_NAMESPACE --no-headers | wc -l) -lt 5 ]]' || return 1
@@ -126,7 +204,7 @@ function run_e2e_tests(){
       local run_command="-run ^(${test_name})$"
   fi
 
-  go_test_e2e -timeout=90m -parallel=4 ./test/e2e \
+  go_test_e2e -timeout=90m -parallel=12 ./test/e2e \
     "$run_command" \
     $common_opts --dockerrepo "quay.io/openshift-knative" --tag "v0.18" || failed=$?
 

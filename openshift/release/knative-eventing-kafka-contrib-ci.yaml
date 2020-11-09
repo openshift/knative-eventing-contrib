@@ -332,7 +332,7 @@ spec:
       serviceAccountName: kafka-controller-manager
       containers:
       - name: manager
-        image: quay.io/openshift-knative/knative-eventing-sources-kafka-source-controller:v0.18.0
+        image: registry.svc.ci.openshift.org/openshift/knative-v0.18.0:knative-eventing-sources-kafka-source-controller
         env:
         - name: SYSTEM_NAMESPACE
           valueFrom:
@@ -345,7 +345,7 @@ spec:
         - name: CONFIG_LEADERELECTION_NAME
           value: config-leader-election-kafka
         - name: KAFKA_RA_IMAGE
-          value: quay.io/openshift-knative/knative-eventing-sources-kafka-source-adapter:v0.18.0
+          value: registry.svc.ci.openshift.org/openshift/knative-v0.18.0:knative-eventing-sources-kafka-source-adapter
         volumeMounts:
         resources:
           requests:
@@ -1049,7 +1049,7 @@ spec:
       serviceAccountName: kafka-ch-controller
       containers:
         - name: controller
-          image: quay.io/openshift-knative/knative-eventing-sources-kafka-channel-controller:v0.18.0
+          image: registry.svc.ci.openshift.org/openshift/knative-v0.18.0:knative-eventing-sources-kafka-channel-controller
           env:
             - name: CONFIG_LOGGING_NAME
               value: config-logging
@@ -1062,7 +1062,7 @@ spec:
             - name: CONFIG_LEADERELECTION_NAME
               value: config-leader-election-kafka
             - name: DISPATCHER_IMAGE
-              value: quay.io/openshift-knative/knative-eventing-sources-kafka-channel-dispatcher:v0.18.0
+              value: registry.svc.ci.openshift.org/openshift/knative-v0.18.0:knative-eventing-sources-kafka-channel-dispatcher
           ports:
             - containerPort: 9090
               name: metrics
@@ -1096,9 +1096,10 @@ spec:
     spec:
       containers:
         - name: dispatcher
-          image: quay.io/openshift-knative/knative-eventing-sources-kafka-channel-dispatcher:v0.18.0
+          image: registry.svc.ci.openshift.org/openshift/knative-v0.18.0:knative-eventing-sources-kafka-channel-dispatcher
           env:
             - name: SYSTEM_NAMESPACE
+              value: ''
               valueFrom:
                 fieldRef:
                   apiVersion: v1
@@ -1203,7 +1204,7 @@ spec:
       containers:
       - name: kafka-webhook
         terminationMessagePolicy: FallbackToLogsOnError
-        image: quay.io/openshift-knative/knative-eventing-sources-kafka-channel-webhook:v0.18.0
+        image: registry.svc.ci.openshift.org/openshift/knative-v0.18.0:knative-eventing-sources-kafka-channel-webhook
         env:
           - name: SYSTEM_NAMESPACE
             valueFrom:

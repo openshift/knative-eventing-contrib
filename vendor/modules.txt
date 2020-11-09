@@ -170,6 +170,7 @@ github.com/google/go-github/v27/github
 # github.com/google/go-querystring v1.0.0
 github.com/google/go-querystring/query
 # github.com/google/gofuzz v1.1.0
+## explicit
 github.com/google/gofuzz
 # github.com/google/mako v0.0.0-20190821191249-122f8dcef9e3
 github.com/google/mako/clients/proto/analyzers/threshold_analyzer_go_proto
@@ -722,12 +723,15 @@ k8s.io/apiextensions-apiserver/pkg/client/listers/apiextensions/v1
 k8s.io/apiextensions-apiserver/pkg/client/listers/apiextensions/v1beta1
 # k8s.io/apimachinery v0.18.8 => k8s.io/apimachinery v0.18.8
 ## explicit
+k8s.io/apimachinery/pkg/api/apitesting
 k8s.io/apimachinery/pkg/api/apitesting/fuzzer
+k8s.io/apimachinery/pkg/api/apitesting/roundtrip
 k8s.io/apimachinery/pkg/api/equality
 k8s.io/apimachinery/pkg/api/errors
 k8s.io/apimachinery/pkg/api/meta
 k8s.io/apimachinery/pkg/api/resource
 k8s.io/apimachinery/pkg/api/validation
+k8s.io/apimachinery/pkg/apis/meta/fuzzer
 k8s.io/apimachinery/pkg/apis/meta/internalversion
 k8s.io/apimachinery/pkg/apis/meta/v1
 k8s.io/apimachinery/pkg/apis/meta/v1/unstructured
@@ -1049,7 +1053,7 @@ k8s.io/utils/buffer
 k8s.io/utils/integer
 k8s.io/utils/pointer
 k8s.io/utils/trace
-# knative.dev/eventing v0.18.0
+# knative.dev/eventing v0.18.5-0.20201106152308-911edb6d9ff2
 ## explicit
 knative.dev/eventing/pkg/adapter/v2
 knative.dev/eventing/pkg/adapter/v2/util/crstatusevent
@@ -1155,6 +1159,9 @@ knative.dev/eventing/test/lib/dropevents/dropeventsfibonacci
 knative.dev/eventing/test/lib/dropevents/dropeventsfirst
 knative.dev/eventing/test/lib/duck
 knative.dev/eventing/test/lib/recordevents
+knative.dev/eventing/test/lib/recordevents/logger_vent
+knative.dev/eventing/test/lib/recordevents/observer
+knative.dev/eventing/test/lib/recordevents/recorder_vent
 knative.dev/eventing/test/lib/resources
 knative.dev/eventing/test/lib/sender
 knative.dev/eventing/test/performance/infra
@@ -1182,6 +1189,7 @@ knative.dev/pkg/apis/duck/v1alpha1
 knative.dev/pkg/apis/duck/v1beta1
 knative.dev/pkg/apis/testing
 knative.dev/pkg/apis/testing/fuzzer
+knative.dev/pkg/apis/testing/roundtrip
 knative.dev/pkg/changeset
 knative.dev/pkg/client/injection/apiextensions/client
 knative.dev/pkg/client/injection/apiextensions/informers/apiextensions/v1/customresourcedefinition
