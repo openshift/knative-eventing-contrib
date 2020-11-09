@@ -5,7 +5,7 @@ CGO_ENABLED=0
 GOOS=linux
 # Ignore errors if there are no images.
 CORE_IMAGES=$(shell find ./cmd -mindepth 1 -maxdepth 1 -type d 2> /dev/null)
-TEST_IMAGES=$(shell find ./test/test_images -mindepth 1 -maxdepth 1 -type d 2> /dev/null)
+TEST_IMAGES=$(shell find ./test/test_images -mindepth 1 -maxdepth 1 -type d 2> /dev/null) $(shell find ./vendor/knative.dev/eventing/test/test_images -mindepth 1 -maxdepth 1 -type d 2> /dev/null) 
 
 # Guess location of openshift/release repo. NOTE: override this if it is not correct.
 OPENSHIFT=${CURDIR}/../../github.com/openshift/release
