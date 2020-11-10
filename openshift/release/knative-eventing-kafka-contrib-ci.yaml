@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: knative-sources
+  name: knative-eventing
   labels:
     contrib.eventing.knative.dev/release: devel
 ---
@@ -10,7 +10,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: kafka-controller-manager
-  namespace: knative-sources
+  namespace: knative-eventing
   labels:
     contrib.eventing.knative.dev/release: devel
 ---
@@ -146,7 +146,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: kafka-controller-manager
-  namespace: knative-sources
+  namespace: knative-eventing
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -161,7 +161,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: kafka-controller-manager
-  namespace: knative-sources
+  namespace: knative-eventing
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -176,7 +176,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: kafka-controller-manager
-  namespace: knative-sources
+  namespace: knative-eventing
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -213,7 +213,7 @@ spec:
     webhookClientConfig:
       service:
         name: kafka-source-webhook
-        namespace: knative-sources
+        namespace: knative-eventing
   additionalPrinterColumns:
     - name: BootstrapServers
       type: string
@@ -272,7 +272,7 @@ spec:
     webhookClientConfig:
       service:
         name: kafka-source-webhook
-        namespace: knative-sources
+        namespace: knative-eventing
   additionalPrinterColumns:
     - name: Topics
       type: string
@@ -301,7 +301,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: kafka-controller
-  namespace: knative-sources
+  namespace: knative-eventing
   labels:
     contrib.eventing.knative.dev/release: devel
     control-plane: kafka-controller-manager
@@ -316,7 +316,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kafka-controller-manager
-  namespace: knative-sources
+  namespace: knative-eventing
   labels:
     contrib.eventing.knative.dev/release: devel
     control-plane: kafka-controller-manager
@@ -372,7 +372,7 @@ metadata:
     role: webhook
     contrib.eventing.knative.dev/release: devel
   name: kafka-source-webhook
-  namespace: knative-sources
+  namespace: knative-eventing
 spec:
   ports:
     - name: https-webhook
@@ -393,7 +393,7 @@ webhooks:
   clientConfig:
     service:
       name: kafka-source-webhook
-      namespace: knative-sources
+      namespace: knative-eventing
   failurePolicy: Fail
   name: defaulting.webhook.kafka.sources.knative.dev
 ---
@@ -409,7 +409,7 @@ webhooks:
   clientConfig:
     service:
       name: kafka-source-webhook
-      namespace: knative-sources
+      namespace: knative-eventing
   failurePolicy: Fail
   name: kafkabindings.webhook.kafka.sources.knative.dev
 ---
@@ -425,7 +425,7 @@ webhooks:
   clientConfig:
     service:
       name: kafka-source-webhook
-      namespace: knative-sources
+      namespace: knative-eventing
   failurePolicy: Fail
   name: validation.webhook.kafka.sources.knative.dev
 ---
@@ -441,7 +441,7 @@ webhooks:
   clientConfig:
     service:
       name: kafka-source-webhook
-      namespace: knative-sources
+      namespace: knative-eventing
   failurePolicy: Fail
   name: config.webhook.kafka.sources.knative.dev
   namespaceSelector:
@@ -453,7 +453,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: kafka-source-webhook-certs
-  namespace: knative-sources
+  namespace: knative-eventing
   labels:
     contrib.eventing.knative.dev/release: devel
 ---
@@ -461,7 +461,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: config-leader-election-kafka
-  namespace: knative-sources
+  namespace: knative-eventing
 data:
   resourceLock: "leases"
   leaseDuration: "15s"
@@ -479,12 +479,12 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: config-logging
-  namespace: knative-sources
+  namespace: knative-eventing
 data:
   zap-logger-config: |
     {
-      "level": "debug",
-      "development": true,
+      "level": "info",
+      "development": false,
       "outputPaths": ["stdout"],
       "errorOutputPaths": ["stderr"],
       "encoding": "json",
@@ -509,7 +509,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: config-observability
-  namespace: knative-sources
+  namespace: knative-eventing
 data:
   _example: |
     logging.enable-var-log-collection: false
@@ -780,17 +780,6 @@ rules:
     verbs:
       - create
       - patch
-  - apiGroups:
-      - "coordination.k8s.io"
-    resources:
-      - leases
-    verbs:
-      - get
-      - list
-      - watch
-      - create
-      - patch
-      - update
 ---
 apiVersion: v1
 kind: ServiceAccount
