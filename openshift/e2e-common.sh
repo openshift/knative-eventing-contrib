@@ -171,20 +171,36 @@ function install_knative_eventing(){
   wait_until_pods_running $EVENTING_NAMESPACE || return 1
 }
 
-function install_knative_kafka(){
+function install_knative_kafka {
+  install_knative_kafka_channel
+  install_knative_kafka_source
+}
+
+function install_knative_kafka_channel(){
   header "Installing Knative Kafka components"
 
-  RELEASE_YAML="openshift/release/knative-eventing-kafka-contrib-ci.yaml"
+  RELEASE_YAML="openshift/release/knative-eventing-kafka-channel-ci.yaml"
 
-  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-source-controller|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-source-controller}|g"   ${RELEASE_YAML}
-  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-source-adapter|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-source-adapter}|g"         ${RELEASE_YAML}
   sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-controller|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-controller}|g" ${RELEASE_YAML}
   sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-dispatcher|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-dispatcher}|g" ${RELEASE_YAML}
   sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-webhook|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-webhook}|g"       ${RELEASE_YAML}
 
   cat ${RELEASE_YAML} \
-  | sed 's/namespace: .*/namespace: knative-eventing/' \
   | sed 's/REPLACE_WITH_CLUSTER_URL/my-cluster-kafka-bootstrap.kafka:9092/' \
+  | oc apply --filename -
+
+  wait_until_pods_running $EVENTING_NAMESPACE || return 1
+}
+
+function install_knative_kafka_source(){
+  header "Installing Knative Kafka components"
+
+  RELEASE_YAML="openshift/release/knative-eventing-kafka-source-ci.yaml"
+
+  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-source-controller|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-source-controller}|g"   ${RELEASE_YAML}
+  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-source-adapter|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-source-adapter}|g"         ${RELEASE_YAML}
+
+  cat ${RELEASE_YAML} \
   | oc apply --filename -
 
   wait_until_pods_running $EVENTING_NAMESPACE || return 1
