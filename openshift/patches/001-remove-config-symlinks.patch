@@ -1,0 +1,16 @@
+diff --git a/kafka/source/config/config-leader-election.yaml b/kafka/source/config/config-leader-election.yaml
+deleted file mode 120000
+index 0b9898e8..00000000
+--- a/kafka/source/config/config-leader-election.yaml
++++ /dev/null
+@@ -1 +0,0 @@
+-configmaps/leader-election.yaml
+\ No newline at end of file
+diff --git a/kafka/source/config/config-observability.yaml b/kafka/source/config/config-observability.yaml
+deleted file mode 120000
+index 29f33b99..00000000
+--- a/kafka/source/config/config-observability.yaml
++++ /dev/null
+@@ -1 +0,0 @@
+-configmaps/observability.yaml
+\ No newline at end of file

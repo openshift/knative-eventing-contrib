@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # Usage: create-release-branch.sh v0.9.0 release-v0.9.0
 
 set -e # Exit immediately on error.
@@ -17,3 +18,8 @@ make generate-dockerfiles
 make RELEASE=$release generate-kafka
 git add openshift OWNERS_ALIASES OWNERS Makefile
 git commit -m "Add openshift specific files."
+
+# Apply patches .
+git apply openshift/patches/*
+make RELEASE=$release generate-kafka
+git commit -am ":fire: Apply carried patches."
