@@ -177,7 +177,7 @@ function install_knative_kafka {
 }
 
 function install_knative_kafka_channel(){
-  header "Installing Knative Kafka components"
+  header "Installing Knative Kafka Channel"
 
   RELEASE_YAML="openshift/release/knative-eventing-kafka-channel-ci.yaml"
 
@@ -193,7 +193,7 @@ function install_knative_kafka_channel(){
 }
 
 function install_knative_kafka_source(){
-  header "Installing Knative Kafka components"
+  header "Installing Knative Kafka Source"
 
   RELEASE_YAML="openshift/release/knative-eventing-kafka-source-ci.yaml"
 
