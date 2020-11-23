@@ -2,7 +2,6 @@
 # shellcheck disable=SC1090
 source "$(dirname "$0")/../vendor/knative.dev/test-infra/scripts/e2e-tests.sh"
 source "$(dirname "$0")/e2e-common.sh"
-source "$(dirname "$0")/../test/e2e-tests.sh"
 
 set -x
 
@@ -14,7 +13,7 @@ scale_up_workers || exit 1
 
 failed=0
 
-(( !failed )) && kafka_setup || failed=1
+(( !failed )) && install_strimzi || failed=1
 
 (( !failed )) && install_serverless || failed=1
 
