@@ -125,25 +125,6 @@ data:
 EOF
 }
 
-function install_strimzi(){
-  strimzi_version=`curl https://github.com/strimzi/strimzi-kafka-operator/releases/latest |  awk -F 'tag/' '{print $2}' | awk -F '"' '{print $1}' 2>/dev/null`
-  header "Strimzi install"
-  oc create namespace kafka
-  oc -n kafka apply --selector strimzi.io/crd-install=true -f "https://github.com/strimzi/strimzi-kafka-operator/releases/download/${strimzi_version}/strimzi-cluster-operator-${strimzi_version}.yaml"
-  curl -L "https://github.com/strimzi/strimzi-kafka-operator/releases/download/${strimzi_version}/strimzi-cluster-operator-${strimzi_version}.yaml" \
-  | sed 's/namespace: .*/namespace: kafka/' \
-  | oc -n kafka apply -f -
-
-  # Wait for the CRD we need to actually be active
-  oc wait crd --timeout=-1s kafkas.kafka.strimzi.io --for=condition=Established
-
-  header "Applying Strimzi Cluster file"
-  oc -n kafka apply -f "https://raw.githubusercontent.com/strimzi/strimzi-kafka-operator/${strimzi_version}/examples/kafka/kafka-persistent.yaml"
-
-  header "Waiting for Strimzi to become ready"
-  oc wait kafka --all --timeout=-1s --for=condition=Ready -n kafka
-}
-
 function install_serverless(){
   header "Installing Serverless Operator"
   local operator_dir=/tmp/serverless-operator
@@ -220,7 +201,7 @@ function run_e2e_tests(){
       local run_command="-run ^(${test_name})$"
   fi
 
-  go_test_e2e -timeout=90m -parallel=12 ./test/e2e \
+  go_test_e2e -tags=e2e,source -timeout=90m -parallel=12 ./test/e2e \
     "$run_command" \
     $common_opts --dockerrepo "quay.io/openshift-knative" --tag "v0.18" || failed=$?
 
