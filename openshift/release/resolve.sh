@@ -4,7 +4,8 @@ function resolve_resources(){
   local dir=$1
   local resolved_file_name=$2
   local image_prefix=$3
-  local image_tag=$4
+  local release=$4
+  local image_tag=$5
 
   [[ -n $image_tag ]] && image_tag=":$image_tag"
 
@@ -21,6 +22,7 @@ function resolve_resources(){
     sed -e "s+\(.* image: \)\(knative.dev\)\(.*/\)\(test/\)\(.*\)+\1\2 \3\4test-\5+g" \
         -e "s+ko://++" \
         -e "s+knative-sources+knative-eventing+" \
+        -e "s+contrib.eventing.knative.dev/release: devel+contrib.eventing.knative.dev/release: ${release}+" \
         -e "s+knative.dev/eventing-contrib/kafka/source/cmd/receive_adapter+${image_prefix}kafka-source-adapter${image_tag}+" \
         -e "s+knative.dev/eventing-contrib/kafka/source/cmd/controller+${image_prefix}kafka-source-controller${image_tag}+" \
         -e "s+knative.dev/eventing-contrib/kafka/channel/cmd/channel_controller+${image_prefix}kafka-channel-controller${image_tag}+" \

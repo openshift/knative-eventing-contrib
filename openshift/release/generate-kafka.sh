@@ -14,8 +14,8 @@ fi
 
 # Apache Kafka Source
 output_file="openshift/release/knative-eventing-kafka-source-ci.yaml"
-resolve_resources kafka/source/config/ $output_file $image_prefix $tag
+resolve_resources kafka/source/config/ $output_file $image_prefix $release $tag
 
 # Apache Kafka Channel
 output_file="openshift/release/knative-eventing-kafka-channel-ci.yaml"
-resolve_resources kafka/channel/config/ $output_file $image_prefix $tag
+resolve_resources kafka/channel/config/ $output_file $image_prefix $release $tag
