@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
 export EVENTING_NAMESPACE="${EVENTING_NAMESPACE:-knative-eventing}"
+export TEST_EVENTING_NAMESPACE=$EVENTING_NAMESPACE
+export KNATIVE_DEFAULT_NAMESPACE=$EVENTING_NAMESPACE
 export ZIPKIN_NAMESPACE=$EVENTING_NAMESPACE
+export CONFIG_TRACING_CONFIG="test/config/config-tracing.yaml"
 
 function scale_up_workers(){
   local cluster_api_ns="openshift-machine-api"
