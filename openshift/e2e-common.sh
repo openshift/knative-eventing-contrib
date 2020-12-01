@@ -132,6 +132,11 @@ data:
 EOF
 }
 
+function create_auth_secrets() {
+  create_tls_secrets
+  create_sasl_secrets
+}
+
 function create_tls_secrets() {
   header "Creating TLS Kafka secret"
   STRIMZI_CRT=$(oc -n kafka get secret my-cluster-cluster-ca-cert --template='{{index .data "ca.crt"}}' | base64 --decode )
@@ -169,10 +174,6 @@ function install_strimzi(){
 
   # Create some Strimzi Kafka Users
   oc apply -f "${KAFKA_USERS_CONFIG}" -n kafka
-
-  # Create the TLS/SASL secrets
-  create_tls_secrets
-  create_sasl_secrets
 }
 
 function install_serverless(){
