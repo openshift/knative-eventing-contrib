@@ -167,10 +167,10 @@ function install_strimzi(){
   sed 's/namespace: .*/namespace: kafka/' ${STRIMZI_INSTALLATION_CONFIG_TEMPLATE} > ${STRIMZI_INSTALLATION_CONFIG}
   oc apply -f "${STRIMZI_INSTALLATION_CONFIG}" -n kafka || return 1
   # Wait for the CRD we need to actually be active
-  oc wait crd --timeout=-1s kafkas.kafka.strimzi.io --for=condition=Established || return 1
+  oc wait crd --timeout=900s kafkas.kafka.strimzi.io --for=condition=Established || return 1
 
   oc apply -f ${KAFKA_INSTALLATION_CONFIG} -n kafka
-  oc wait kafka --all --timeout=-1s --for=condition=Ready -n kafka || return 1
+  oc wait kafka --all --timeout=900s --for=condition=Ready -n kafka || return 1
 
   # Create some Strimzi Kafka Users
   oc apply -f "${KAFKA_USERS_CONFIG}" -n kafka || return 1
