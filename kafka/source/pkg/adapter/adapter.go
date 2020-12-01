@@ -138,6 +138,8 @@ func (a *Adapter) Handle(ctx context.Context, msg *sarama.ConsumerMessage) (bool
 		return false, err // Error while sending, don't commit offset
 	}
 
+	defer safeCloseHTTPResponseBody(res)
+
 	if res.StatusCode/100 != 2 {
 		a.logger.Debug("Unexpected status code", zap.Int("status code", res.StatusCode))
 		return false, fmt.Errorf("%d %s", res.StatusCode, http.StatusText(res.StatusCode))
@@ -151,4 +153,10 @@ func (a *Adapter) Handle(ctx context.Context, msg *sarama.ConsumerMessage) (bool
 
 	_ = a.reporter.ReportEventCount(reportArgs, res.StatusCode)
 	return true, nil
+}
+
+func safeCloseHTTPResponseBody(response *http.Response) {
+	if response != nil && response.Body != nil {
+		response.Body.Close()
+	}
 }
