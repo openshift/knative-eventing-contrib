@@ -9,6 +9,13 @@ export STRIMZI_INSTALLATION_CONFIG_TEMPLATE="test/config/100-strimzi-cluster-ope
 export STRIMZI_INSTALLATION_CONFIG="$(mktemp)"
 export KAFKA_INSTALLATION_CONFIG="test/config/100-kafka-ephemeral-triple-2.6.0.yaml"
 export KAFKA_USERS_CONFIG="test/config/100-strimzi-users-0.20.0.yaml"
+export KAFKA_PLAIN_CLUSTER_URL="my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+export KAFKA_TLS_CLUSTER_URL="my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9093"
+export KAFKA_SASL_CLUSTER_URL="my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9094"
+export KAFKA_TLS_CONFIG="test/config/config-kafka-tls.yaml"
+export KAFKA_SASL_CONFIG="test/config/config-kafka-sasl.yaml"
+export KAFKA_CRD_CONFIG_TEMPLATE_DIR="kafka/channel/config"
+KAFKA_CLUSTER_URL=${KAFKA_PLAIN_CLUSTER_URL}
 
 function scale_up_workers(){
   local cluster_api_ns="openshift-machine-api"
@@ -218,7 +225,7 @@ function install_knative_kafka_channel(){
   sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-webhook|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-webhook}|g"       ${RELEASE_YAML}
 
   cat ${RELEASE_YAML} \
-  | sed 's/REPLACE_WITH_CLUSTER_URL/my-cluster-kafka-bootstrap.kafka:9092/' \
+  | sed "s/REPLACE_WITH_CLUSTER_URL/${KAFKA_CLUSTER_URL}/" \
   | oc apply --filename -
 
   wait_until_pods_running $EVENTING_NAMESPACE || return 1
@@ -238,6 +245,27 @@ function install_knative_kafka_source(){
   wait_until_pods_running $EVENTING_NAMESPACE || return 1
 }
 
+function uinstall_knative_kafka {
+  uninstall_knative_kafka_channel
+  uninstall_knative_kafka_source
+}
+
+function uninstall_knative_kafka_channel(){
+  header "Uninstalling Knative Kafka Channel"
+
+  RELEASE_YAML="openshift/release/knative-eventing-kafka-channel-ci.yaml"
+
+  oc delete -f ${RELEASE_YAML} || return 1
+}
+
+function uninstall_knative_kafka_source(){
+  header "InstalUninstallingling Knative Kafka Source"
+
+  RELEASE_YAML="openshift/release/knative-eventing-kafka-source-ci.yaml"
+
+  oc delete -f ${RELEASE_YAML} || return 1
+}
+
 function run_e2e_tests(){
 
   oc get ns ${TEST_EVENTING_NAMESPACE} 2>/dev/null || TEST_EVENTING_NAMESPACE="knative-eventing"
@@ -255,6 +283,35 @@ function run_e2e_tests(){
   go_test_e2e -tags=e2e,source -timeout=90m -parallel=12 ./test/e2e \
     "$run_command" \
     $common_opts --dockerrepo "quay.io/openshift-knative" --tag "v0.18" || failed=$?
+
+  return $failed
+}
+
+function run_e2e_tls_tests(){
+  header "Testing the consolidated channel with TLS"
+  # Set the URL to the TLS listeners config
+  cp ${KAFKA_TLS_CONFIG} "${KAFKA_CRD_CONFIG_TEMPLATE_DIR}/configmaps/kafka-config.yaml"
+  KAFKA_CLUSTER_URL=${KAFKA_TLS_CLUSTER_URL}
+
+  install_knative_kafka_channel || return 1
+
+  oc get ns ${TEST_EVENTING_NAMESPACE} 2>/dev/null || TEST_EVENTING_NAMESPACE="knative-eventing"
+  sed "s/namespace: ${KNATIVE_DEFAULT_NAMESPACE}/namespace: ${TEST_EVENTING_NAMESPACE}/g" ${CONFIG_TRACING_CONFIG} | oc replace -f -
+  local test_name="${1:-}"
+  local run_command=""
+  local failed=0
+  local channels=messaging.knative.dev/v1beta1:KafkaChannel
+
+  local common_opts=" -channels=$channels --kubeconfig $KUBECONFIG" ## --imagetemplate $TEST_IMAGE_TEMPLATE"
+  if [ -n "$test_name" ]; then
+      local run_command="-run ^(${test_name})$"
+  fi
+
+  go_test_e2e -tags=e2e -timeout=90m -parallel=12 ./test/e2e \
+    "$run_command" \
+    $common_opts --dockerrepo "quay.io/openshift-knative" --tag "v0.18" || failed=$?
+
+  uninstall_knative_kafka_channel || return 1
 
   return $failed
 }
