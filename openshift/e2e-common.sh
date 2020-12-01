@@ -5,6 +5,10 @@ export TEST_EVENTING_NAMESPACE=$EVENTING_NAMESPACE
 export KNATIVE_DEFAULT_NAMESPACE=$EVENTING_NAMESPACE
 export ZIPKIN_NAMESPACE=$EVENTING_NAMESPACE
 export CONFIG_TRACING_CONFIG="test/config/config-tracing.yaml"
+export STRIMZI_INSTALLATION_CONFIG_TEMPLATE="test/config/100-strimzi-cluster-operator-0.20.0.yaml"
+export STRIMZI_INSTALLATION_CONFIG="$(mktemp)"
+export KAFKA_INSTALLATION_CONFIG="test/config/100-kafka-ephemeral-triple-2.6.0.yaml"
+export KAFKA_USERS_CONFIG="test/config/100-strimzi-users-0.20.0.yaml"
 
 function scale_up_workers(){
   local cluster_api_ns="openshift-machine-api"
@@ -108,7 +112,7 @@ spec:
 EOF
 
   logger.info "Waiting until Zipkin is available"
-  kubectl wait deployment --all --timeout=600s --for=condition=Available -n ${ZIPKIN_NAMESPACE} || return 1
+  oc wait deployment --all --timeout=600s --for=condition=Available -n ${ZIPKIN_NAMESPACE} || return 1
 }
 
 function enable_eventing_tracing {
@@ -128,23 +132,47 @@ data:
 EOF
 }
 
-function install_strimzi(){
-  strimzi_version=`curl https://github.com/strimzi/strimzi-kafka-operator/releases/latest |  awk -F 'tag/' '{print $2}' | awk -F '"' '{print $1}' 2>/dev/null`
-  header "Strimzi install"
-  oc create namespace kafka
-  oc -n kafka apply --selector strimzi.io/crd-install=true -f "https://github.com/strimzi/strimzi-kafka-operator/releases/download/${strimzi_version}/strimzi-cluster-operator-${strimzi_version}.yaml"
-  curl -L "https://github.com/strimzi/strimzi-kafka-operator/releases/download/${strimzi_version}/strimzi-cluster-operator-${strimzi_version}.yaml" \
-  | sed 's/namespace: .*/namespace: kafka/' \
-  | oc -n kafka apply -f -
+function create_tls_secrets() {
+  header "Creating TLS Kafka secret"
+  STRIMZI_CRT=$(oc -n kafka get secret my-cluster-cluster-ca-cert --template='{{index .data "ca.crt"}}' | base64 --decode )
+  TLSUSER_CRT=$(oc -n kafka get secret my-tls-user --template='{{index .data "user.crt"}}' | base64 --decode )
+  TLSUSER_KEY=$(oc -n kafka get secret my-tls-user --template='{{index .data "user.key"}}' | base64 --decode )
 
+  kubeocctl create secret --namespace knative-eventing generic strimzi-tls-secret \
+    --from-literal=ca.crt="$STRIMZI_CRT" \
+    --from-literal=user.crt="$TLSUSER_CRT" \
+    --from-literal=user.key="$TLSUSER_KEY"
+}
+
+function create_sasl_secrets() {
+  header "Creating SASL Kafka secret"
+  STRIMZI_CRT=$(oc -n kafka get secret my-cluster-cluster-ca-cert --template='{{index .data "ca.crt"}}' | base64 --decode )
+  SASL_PASSWD=$(oc -n kafka get secret my-sasl-user --template='{{index .data "password"}}' | base64 --decode )
+
+  oc create secret --namespace knative-eventing generic strimzi-sasl-secret \
+    --from-literal=ca.crt="$STRIMZI_CRT" \
+    --from-literal=password="$SASL_PASSWD" \
+    --from-literal=saslType="SCRAM-SHA-512" \
+    --from-literal=user="my-sasl-user"
+}
+
+function install_strimzi(){
+  header "Installing Kafka cluster"
+  oc create namespace kafka || return 1
+  sed 's/namespace: .*/namespace: kafka/' ${STRIMZI_INSTALLATION_CONFIG_TEMPLATE} > ${STRIMZI_INSTALLATION_CONFIG}
+  oc apply -f "${STRIMZI_INSTALLATION_CONFIG}" -n kafka
   # Wait for the CRD we need to actually be active
   oc wait crd --timeout=-1s kafkas.kafka.strimzi.io --for=condition=Established
 
-  header "Applying Strimzi Cluster file"
-  oc -n kafka apply -f "https://raw.githubusercontent.com/strimzi/strimzi-kafka-operator/${strimzi_version}/examples/kafka/kafka-persistent.yaml"
-
-  header "Waiting for Strimzi to become ready"
+  oc apply -f ${KAFKA_INSTALLATION_CONFIG} -n kafka
   oc wait kafka --all --timeout=-1s --for=condition=Ready -n kafka
+
+  # Create some Strimzi Kafka Users
+  oc apply -f "${KAFKA_USERS_CONFIG}" -n kafka
+
+  # Create the TLS/SASL secrets
+  create_tls_secrets
+  create_sasl_secrets
 }
 
 function install_serverless(){
