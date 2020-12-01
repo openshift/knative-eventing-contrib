@@ -24,6 +24,7 @@ CONFIG=$CONFIGDIR/openshift-knative-eventing-contrib-release-$VERSION
 
 CURDIR=$(dirname $0)
 $CURDIR/generate-ci-config.sh knative-$VERSION 4.6 > ${CONFIG}__46.yaml
+$CURDIR/generate-ci-config.sh knative-$VERSION 4.7 true > ${CONFIG}__47.yaml
 
 # Append missing lines to the mirror file.
 [ -n "$(tail -c1 $MIRROR)" ] && echo >> $MIRROR # Make sure there's a newline
