@@ -165,22 +165,22 @@ function install_strimzi(){
   header "Installing Kafka cluster"
   oc create namespace kafka || return 1
   sed 's/namespace: .*/namespace: kafka/' ${STRIMZI_INSTALLATION_CONFIG_TEMPLATE} > ${STRIMZI_INSTALLATION_CONFIG}
-  oc apply -f "${STRIMZI_INSTALLATION_CONFIG}" -n kafka
+  oc apply -f "${STRIMZI_INSTALLATION_CONFIG}" -n kafka || return 1
   # Wait for the CRD we need to actually be active
-  oc wait crd --timeout=-1s kafkas.kafka.strimzi.io --for=condition=Established
+  oc wait crd --timeout=900s kafkas.kafka.strimzi.io --for=condition=Established || return 1
 
   oc apply -f ${KAFKA_INSTALLATION_CONFIG} -n kafka
-  oc wait kafka --all --timeout=-1s --for=condition=Ready -n kafka
+  oc wait kafka --all --timeout=900s --for=condition=Ready -n kafka || return 1
 
   # Create some Strimzi Kafka Users
-  oc apply -f "${KAFKA_USERS_CONFIG}" -n kafka
+  oc apply -f "${KAFKA_USERS_CONFIG}" -n kafka || return 1
 }
 
 function install_serverless(){
   header "Installing Serverless Operator"
   local operator_dir=/tmp/serverless-operator
   local failed=0
-  git clone --branch release-1.11 https://github.com/openshift-knative/serverless-operator.git $operator_dir
+  git clone --branch release-1.11 https://github.com/openshift-knative/serverless-operator.git $operator_dir || return 1
   # unset OPENSHIFT_BUILD_NAMESPACE (old CI) and OPENSHIFT_CI (new CI) as its used in serverless-operator's CI
   # environment as a switch to use CI built images, we want pre-built images of k-s-o and k-o-i
   unset OPENSHIFT_BUILD_NAMESPACE
@@ -195,8 +195,8 @@ function install_serverless(){
 function install_knative_eventing(){
   header "Installing Knative Eventing 0.18.4"
 
-  oc apply -f https://raw.githubusercontent.com/openshift/knative-eventing/release-v0.18.4/openshift/release/knative-eventing-ci.yaml
-  oc apply -f https://raw.githubusercontent.com/openshift/knative-eventing/release-v0.18.4/openshift/release/knative-eventing-mtbroker-ci.yaml
+  oc apply -f https://raw.githubusercontent.com/openshift/knative-eventing/release-v0.18.4/openshift/release/knative-eventing-ci.yaml || return 1
+  oc apply -f https://raw.githubusercontent.com/openshift/knative-eventing/release-v0.18.4/openshift/release/knative-eventing-mtbroker-ci.yaml || return 1
 
   # Wait for 5 pods to appear first
   timeout 900 '[[ $(oc get pods -n $EVENTING_NAMESPACE --no-headers | wc -l) -lt 5 ]]' || return 1
@@ -204,8 +204,8 @@ function install_knative_eventing(){
 }
 
 function install_knative_kafka {
-  install_knative_kafka_channel
-  install_knative_kafka_source
+  install_knative_kafka_channel || return 1
+  install_knative_kafka_source || return 1
 }
 
 function install_knative_kafka_channel(){
