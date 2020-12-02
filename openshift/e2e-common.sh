@@ -315,3 +315,32 @@ function run_e2e_tls_tests(){
 
   return $failed
 }
+
+function run_e2e_sasl_tests(){
+  header "Testing the consolidated channel with TLS"
+  # Set the URL to the TLS listeners config
+  cp ${KAFKA_SASL_CONFIG} "${KAFKA_CRD_CONFIG_TEMPLATE_DIR}/configmaps/kafka-config.yaml"
+  KAFKA_CLUSTER_URL=${KAFKA_SASL_CLUSTER_URL}
+
+  install_knative_kafka_channel || return 1
+
+  oc get ns ${TEST_EVENTING_NAMESPACE} 2>/dev/null || TEST_EVENTING_NAMESPACE="knative-eventing"
+  sed "s/namespace: ${KNATIVE_DEFAULT_NAMESPACE}/namespace: ${TEST_EVENTING_NAMESPACE}/g" ${CONFIG_TRACING_CONFIG} | oc replace -f -
+  local test_name="${1:-}"
+  local run_command=""
+  local failed=0
+  local channels=messaging.knative.dev/v1beta1:KafkaChannel
+
+  local common_opts=" -channels=$channels --kubeconfig $KUBECONFIG" ## --imagetemplate $TEST_IMAGE_TEMPLATE"
+  if [ -n "$test_name" ]; then
+      local run_command="-run ^(${test_name})$"
+  fi
+
+  go_test_e2e -tags=e2e -timeout=90m -parallel=12 ./test/e2e \
+    "$run_command" \
+    $common_opts --dockerrepo "quay.io/openshift-knative" --tag "v0.18" || failed=$?
+
+  uninstall_knative_kafka_channel || return 1
+
+  return $failed
+}
