@@ -150,10 +150,12 @@ function create_tls_secrets() {
   TLSUSER_CRT=$(oc -n kafka get secret my-tls-user --template='{{index .data "user.crt"}}' | base64 --decode )
   TLSUSER_KEY=$(oc -n kafka get secret my-tls-user --template='{{index .data "user.key"}}' | base64 --decode )
 
-  kubeocctl create secret --namespace knative-eventing generic strimzi-tls-secret \
+  sleep 10
+
+  oc create secret --namespace knative-eventing generic strimzi-tls-secret \
     --from-literal=ca.crt="$STRIMZI_CRT" \
     --from-literal=user.crt="$TLSUSER_CRT" \
-    --from-literal=user.key="$TLSUSER_KEY"
+    --from-literal=user.key="$TLSUSER_KEY" || return 1
 }
 
 function create_sasl_secrets() {
@@ -161,11 +163,13 @@ function create_sasl_secrets() {
   STRIMZI_CRT=$(oc -n kafka get secret my-cluster-cluster-ca-cert --template='{{index .data "ca.crt"}}' | base64 --decode )
   SASL_PASSWD=$(oc -n kafka get secret my-sasl-user --template='{{index .data "password"}}' | base64 --decode )
 
+  sleep 10
+
   oc create secret --namespace knative-eventing generic strimzi-sasl-secret \
     --from-literal=ca.crt="$STRIMZI_CRT" \
     --from-literal=password="$SASL_PASSWD" \
     --from-literal=saslType="SCRAM-SHA-512" \
-    --from-literal=user="my-sasl-user"
+    --from-literal=user="my-sasl-user" || return 1
 }
 
 function install_strimzi(){
