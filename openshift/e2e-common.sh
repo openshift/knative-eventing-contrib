@@ -272,6 +272,9 @@ function uninstall_knative_kafka_source(){
 
 function run_e2e_tests(){
 
+  # the source tests REQUIRE the secrets, hence we create it here:
+  create_auth_secrets || return 1
+
   oc get ns ${TEST_EVENTING_NAMESPACE} 2>/dev/null || TEST_EVENTING_NAMESPACE="knative-eventing"
   sed "s/namespace: ${KNATIVE_DEFAULT_NAMESPACE}/namespace: ${TEST_EVENTING_NAMESPACE}/g" ${CONFIG_TRACING_CONFIG} | oc replace -f -
   local test_name="${1:-}"
