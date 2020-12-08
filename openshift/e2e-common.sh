@@ -253,6 +253,24 @@ function install_knative_kafka_channel_tls(){
   wait_until_pods_running $EVENTING_NAMESPACE || return 1
 }
 
+function install_knative_kafka_channel_sasl(){
+  header "Installing Knative Kafka Channel with SASL"
+
+  RELEASE_YAML="openshift/release/knative-eventing-kafka-channel-sasl-ci.yaml"
+
+  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-controller|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-controller}|g" ${RELEASE_YAML}
+  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-dispatcher|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-dispatcher}|g" ${RELEASE_YAML}
+  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-webhook|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-webhook}|g"       ${RELEASE_YAML}
+
+  KAFKA_CLUSTER_URL=${KAFKA_SASL_CLUSTER_URL}
+
+  cat ${RELEASE_YAML} \
+  | sed "s/REPLACE_WITH_CLUSTER_URL/${KAFKA_CLUSTER_URL}/" \
+  | oc apply --filename -
+
+  wait_until_pods_running $EVENTING_NAMESPACE || return 1
+}
+
 function install_knative_kafka_source(){
   header "Installing Knative Kafka Source"
 
@@ -313,8 +331,8 @@ function run_e2e_tests(){
   return $failed
 }
 
-function run_e2e_tls_tests(){
-  header "Testing the KafkaChannel with TLS"
+function run_e2e_channel_tests(){
+  header "Testing the KafkaChannel with auth"
 
   oc get ns ${TEST_EVENTING_NAMESPACE} 2>/dev/null || TEST_EVENTING_NAMESPACE="knative-eventing"
   sed "s/namespace: ${KNATIVE_DEFAULT_NAMESPACE}/namespace: ${TEST_EVENTING_NAMESPACE}/g" ${CONFIG_TRACING_CONFIG} | oc replace -f -
