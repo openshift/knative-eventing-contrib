@@ -289,6 +289,7 @@ function uninstall_knative_kafka_source(){
 }
 
 function run_e2e_tests(){
+  header "Testing the KafkaChannel with no AUTH"
 
   # the source tests REQUIRE the secrets, hence we create it here:
   create_auth_secrets || return 1
