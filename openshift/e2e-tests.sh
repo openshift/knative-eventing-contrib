@@ -27,7 +27,17 @@ failed=0
 
 (( !failed )) && uinstall_knative_kafka || failed=1
 
-#(( !failed )) && run_e2e_tls_tests || failed=1
+(( !failed )) && install_knative_kafka_channel_tls || failed=1
+
+(( !failed )) && run_e2e_channel_tests || failed=1
+
+(( !failed )) && uninstall_knative_kafka_channel || failed=1
+
+(( !failed )) && install_knative_kafka_channel_sasl || failed=1
+
+(( !failed )) && run_e2e_channel_tests || failed=1
+
+(( !failed )) && uninstall_knative_kafka_channel || failed=1
 
 (( failed )) && dump_cluster_state
 
