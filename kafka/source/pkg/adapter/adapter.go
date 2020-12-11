@@ -18,6 +18,8 @@ package kafka
 
 import (
 	"fmt"
+	"io"
+	"io/ioutil"
 	"net/http"
 	"strings"
 
@@ -157,6 +159,7 @@ func (a *Adapter) Handle(ctx context.Context, msg *sarama.ConsumerMessage) (bool
 
 func safeCloseHTTPResponseBody(response *http.Response) {
 	if response != nil && response.Body != nil {
+		io.Copy(ioutil.Discard, response.Body)
 		response.Body.Close()
 	}
 }
