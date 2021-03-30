@@ -31,7 +31,7 @@ $CURDIR/generate-ci-config.sh knative-$VERSION 4.7 true > ${CONFIG}__47.yaml
 for IMAGE in $*; do
     NAME=knative-eventing-sources-$(basename $IMAGE | sed 's/_/-/')
     echo "Adding $NAME to mirror file"
-    LINE="registry.svc.ci.openshift.org/openshift/knative-$VERSION:$NAME quay.io/openshift-knative/$NAME:$VERSION"
+    LINE="registry.ci.openshift.org/openshift/knative-$VERSION:$NAME quay.io/openshift-knative/$NAME:$VERSION"
     # Add $LINE if not already present
     grep -q "^$LINE\$" $MIRROR || echo "$LINE"  >> $MIRROR
 done
