@@ -1,5 +1,12 @@
 ---
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: knative-eventing
+  labels:
+    contrib.eventing.knative.dev/release: v0.18.0
+---
+apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: kafka-controller-manager
@@ -325,7 +332,7 @@ spec:
       serviceAccountName: kafka-controller-manager
       containers:
       - name: manager
-        image: registry.svc.ci.openshift.org/openshift/knative-v0.18.0:knative-eventing-sources-kafka-source-controller
+        image: registry.ci.openshift.org/openshift/knative-v0.18.0:knative-eventing-sources-kafka-source-controller
         env:
         - name: SYSTEM_NAMESPACE
           valueFrom:
@@ -338,7 +345,7 @@ spec:
         - name: CONFIG_LEADERELECTION_NAME
           value: config-leader-election-kafka
         - name: KAFKA_RA_IMAGE
-          value: registry.svc.ci.openshift.org/openshift/knative-v0.18.0:knative-eventing-sources-kafka-source-adapter
+          value: registry.ci.openshift.org/openshift/knative-v0.18.0:knative-eventing-sources-kafka-source-adapter
         volumeMounts:
         resources:
           requests:

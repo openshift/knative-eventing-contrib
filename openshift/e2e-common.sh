@@ -224,9 +224,9 @@ function install_knative_kafka_channel(){
 
   RELEASE_YAML="openshift/release/knative-eventing-kafka-channel-ci.yaml"
 
-  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-controller|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-controller}|g" ${RELEASE_YAML}
-  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-dispatcher|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-dispatcher}|g" ${RELEASE_YAML}
-  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-webhook|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-webhook}|g"       ${RELEASE_YAML}
+  sed -i -e "s|registry.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-controller|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-controller}|g" ${RELEASE_YAML}
+  sed -i -e "s|registry.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-dispatcher|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-dispatcher}|g" ${RELEASE_YAML}
+  sed -i -e "s|registry.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-webhook|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-webhook}|g"       ${RELEASE_YAML}
 
   cat ${RELEASE_YAML} \
   | sed "s/REPLACE_WITH_CLUSTER_URL/${KAFKA_CLUSTER_URL}/" \
@@ -240,9 +240,9 @@ function install_knative_kafka_channel_tls(){
 
   RELEASE_YAML="openshift/release/knative-eventing-kafka-channel-tls-ci.yaml"
 
-  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-controller|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-controller}|g" ${RELEASE_YAML}
-  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-dispatcher|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-dispatcher}|g" ${RELEASE_YAML}
-  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-webhook|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-webhook}|g"       ${RELEASE_YAML}
+  sed -i -e "s|registry.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-controller|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-controller}|g" ${RELEASE_YAML}
+  sed -i -e "s|registry.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-dispatcher|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-dispatcher}|g" ${RELEASE_YAML}
+  sed -i -e "s|registry.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-webhook|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-webhook}|g"       ${RELEASE_YAML}
 
   KAFKA_CLUSTER_URL=${KAFKA_TLS_CLUSTER_URL}
 
@@ -258,9 +258,9 @@ function install_knative_kafka_channel_sasl(){
 
   RELEASE_YAML="openshift/release/knative-eventing-kafka-channel-sasl-ci.yaml"
 
-  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-controller|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-controller}|g" ${RELEASE_YAML}
-  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-dispatcher|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-dispatcher}|g" ${RELEASE_YAML}
-  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-webhook|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-webhook}|g"       ${RELEASE_YAML}
+  sed -i -e "s|registry.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-controller|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-controller}|g" ${RELEASE_YAML}
+  sed -i -e "s|registry.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-dispatcher|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-dispatcher}|g" ${RELEASE_YAML}
+  sed -i -e "s|registry.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-channel-webhook|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-channel-webhook}|g"       ${RELEASE_YAML}
 
   KAFKA_CLUSTER_URL=${KAFKA_SASL_CLUSTER_URL}
 
@@ -276,8 +276,8 @@ function install_knative_kafka_source(){
 
   RELEASE_YAML="openshift/release/knative-eventing-kafka-source-ci.yaml"
 
-  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-source-controller|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-source-controller}|g"   ${RELEASE_YAML}
-  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-source-adapter|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-source-adapter}|g"         ${RELEASE_YAML}
+  sed -i -e "s|registry.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-source-controller|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-source-controller}|g"   ${RELEASE_YAML}
+  sed -i -e "s|registry.ci.openshift.org/openshift/knative-.*:knative-eventing-sources-kafka-source-adapter|${IMAGE_FORMAT//\$\{component\}/knative-eventing-sources-kafka-source-adapter}|g"         ${RELEASE_YAML}
 
   cat ${RELEASE_YAML} \
   | oc apply --filename -
