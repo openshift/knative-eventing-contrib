@@ -2,7 +2,6 @@
 
 export EVENTING_NAMESPACE="${EVENTING_NAMESPACE:-knative-eventing}"
 export ZIPKIN_NAMESPACE=$EVENTING_NAMESPACE
-export OLM_NAMESPACE=openshift-marketplace
 
 function scale_up_workers(){
   local cluster_api_ns="openshift-machine-api"
@@ -148,14 +147,14 @@ function install_serverless(){
   header "Installing Serverless Operator"
   local operator_dir=/tmp/serverless-operator
   local failed=0
-  git clone --branch release-1.10 https://github.com/openshift-knative/serverless-operator.git $operator_dir
-  cp openshift/serverless.bash $operator_dir/hack/lib/serverless.bash
+  git clone --branch release-1.12 https://github.com/openshift-knative/serverless-operator.git $operator_dir || return 1
   # unset OPENSHIFT_BUILD_NAMESPACE (old CI) and OPENSHIFT_CI (new CI) as its used in serverless-operator's CI
   # environment as a switch to use CI built images, we want pre-built images of k-s-o and k-o-i
   unset OPENSHIFT_BUILD_NAMESPACE
   unset OPENSHIFT_CI
   pushd $operator_dir
-  ./hack/install.sh && header "Serverless Operator installed successfully" || failed=1
+
+  INSTALL_EVENTING="false" ./hack/install.sh && header "Serverless Operator installed successfully" || failed=1
   popd
   return $failed
 }
